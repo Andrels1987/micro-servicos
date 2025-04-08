@@ -8,14 +8,14 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-/* import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails; */
+import org.springframework.security.core.userdetails.UserDetails; 
 
-import com.condominio.MoradaDoSolApplication;
+
 
 @Document("user")
-public class User /*implements UserDetails */{
+public class User implements UserDetails {
       
     @Id
     private String id;
@@ -90,13 +90,13 @@ public class User /*implements UserDetails */{
     }
 
 
-    /* @Override
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("ROLES: " + this.role+ " EQUAL : " + (this.role == UserRole.ADMIN) + "WHERE : " + MoradaDoSolApplication.whereItIs);
+       
         if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), 
                                                 new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-    } */
+    } 
 
 
     public void setEnabled(boolean enabled) {
@@ -114,34 +114,41 @@ public class User /*implements UserDetails */{
     }
 
 
-    /* @Override
+    @Override
     public String getUsername() {
-        return loginEmail;
-    } */
-
-
-    /* @Override
-    public boolean isAccountNonExpired() {
-        return true;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
     }
 
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+   
 
 
     @Override
     public boolean isEnabled() {
         return true;
-    } */
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+    }
+
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+    }
+
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+    } 
 
     
 }

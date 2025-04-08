@@ -10,12 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ServicoPrestadoDto {
     private String id;
-    private String idMorador;
+    //MORADOR
+    private MoradorDto morador;
+    /* private String idMorador;
     private String nomeMorador;
     private String bloco;
     private String apartamento;
-    private String idPrestadorDeServico;
-    private String nomePrestador;
+     */
+
+    //PRESTADOR
+    private PrestadorDto prestador;
+    /* private String idPrestadorDeServico;
+    private String nomePrestador; */
     private String observacaoSobreServico;
     private LocalDateTime dataInicioDoServico;
     private LocalDateTime dataEncerramentoDoServico;

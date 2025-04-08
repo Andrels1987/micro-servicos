@@ -44,7 +44,7 @@ public class ServicoMoradorImpl implements ServicoMorador {
     @Override
     public MoradorDto getMoradorPeloId(String id) {
         Optional<Morador> moradorEncontrado = repositorioMorador.findById(id);
-
+       
         if (moradorEncontrado.isPresent()) {
             MoradorDto dto = new MoradorDto();
             dto.setId(moradorEncontrado.get().getId());
@@ -68,10 +68,8 @@ public class ServicoMoradorImpl implements ServicoMorador {
                 }
                 dto.setVeiculos(vecs);
             }
-            System.out.println();
-            System.out.println();
-            System.out.println(moradorEncontrado.get().getDependentes());
-            System.out.println();
+
+            
             if (moradorEncontrado.get().getDependentes() != null) {
                 List<DependenteInfo> dependentes = new ArrayList<>();
                 for (var i : moradorEncontrado.get().getDependentes()) {
@@ -89,6 +87,7 @@ public class ServicoMoradorImpl implements ServicoMorador {
 
             return dto;
         }
+        
         return new MoradorDto();
     }
 

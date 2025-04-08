@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.andrels.ms_servicos.FeignClients.ClientMorador;
 import com.andrels.ms_servicos.FeignClients.ClientPrestador;
 import com.andrels.ms_servicos.modelos.MoradorDto;
+import com.andrels.ms_servicos.modelos.MoradorDtoError;
 import com.andrels.ms_servicos.modelos.PrestadorDto;
+import com.andrels.ms_servicos.modelos.PrestadorDtoError;
+import com.andrels.ms_servicos.modelos.PrestadorDtoSuccess;
 import com.andrels.ms_servicos.modelos.ServicoPrestado;
 import com.andrels.ms_servicos.modelos.ServicoPrestadoDto;
 import com.andrels.ms_servicos.repositorios.RepositorioServicoPrestados;
@@ -121,7 +124,7 @@ public class ServicoPrestacaoDeServicoImpl implements ServicoPrestacaoDeServico 
     @Override
     public String addPrestacaoDeServico(ServicoPrestado servicoPrestado) {
         ServicoPrestado servico = new ServicoPrestado();
-        PrestadorDto prestador = clientePrestador.getPrestadorPeloId(servicoPrestado.getIdPrestadorDeServico());
+        PrestadorDtoSuccess prestador = clientePrestador.getPrestadorPeloId(servicoPrestado.getIdPrestadorDeServico());
         MoradorDto morador = clienteMorador.getMoradorPeloId(servicoPrestado.getIdMorador());
     
         if (morador != null && prestador != null) {
@@ -172,21 +175,32 @@ public class ServicoPrestacaoDeServicoImpl implements ServicoPrestacaoDeServico 
 
     public void addInformacaoMorador(ServicoPrestado servico, ServicoPrestadoDto servicoPrestadoDto) {
         // BUSCANDO MORADOR
-        MoradorDto morador = clienteMorador.getMoradorPeloId(servico.getIdMorador());
-        if (morador != null) {
-            servicoPrestadoDto.setIdMorador(morador.id());
-            servicoPrestadoDto.setNomeMorador(morador.nome());
-            servicoPrestadoDto.setBloco(morador.bloco());
-            servicoPrestadoDto.setApartamento(morador.apartamento());
+        MoradorDto morador = null;
+        try {
+            System.out.println("Antes da chamada");
+            morador = clienteMorador.getMoradorPeloId(servico.getIdMorador());            
+            System.out.println("depois da chamada");
+        } catch (Exception e) {
+            
+            morador = new MoradorDtoError("Erro ao carregar informações do morador");
         }
+       
+        servicoPrestadoDto.setMorador(morador);
+        
     }
 
     public void addInformacaoPrestador(ServicoPrestado servico, ServicoPrestadoDto servicoPrestadoDto) {
-        PrestadorDto prestador = clientePrestador.getPrestadorPeloId(servico.getIdPrestadorDeServico());
-        if (prestador != null) {
-            servicoPrestadoDto.setIdPrestadorDeServico(prestador.id());
-            servicoPrestadoDto.setNomePrestador(prestador.nome());
-        }
+        PrestadorDto prestador = null;
+        try {           
+            prestador = clientePrestador.getPrestadorPeloId(servico.getIdPrestadorDeServico());
+            
+        } catch (Exception e) {
+            System.out.println("ERRO: " + e.getMessage());
+            prestador = new PrestadorDtoError("Erro ao carregar informações do prestador de serviço");           
+        } 
+       
+        servicoPrestadoDto.setPrestador(prestador);  
+        
     }
 
     public void addInformacaoServico(ServicoPrestado servico, ServicoPrestadoDto servicoPrestadoDto) {

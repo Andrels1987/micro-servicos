@@ -3,6 +3,8 @@ import axios from 'axios'
 import moment from "moment/moment";
 const url = process.env.REACT_APP_APP_BASE_URL_SERVICO_PRESTADOR;
 export const fetchPrestadores = createAsyncThunk('prestadores/fetchPrestadores', async (token) => {
+    console.log("TOKEN : ", token);
+    
     try {
         const response = await axios.get(`${url}/prestadores`,
             {
