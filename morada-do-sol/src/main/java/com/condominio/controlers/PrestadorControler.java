@@ -66,18 +66,12 @@ public class PrestadorControler {
     // "http://localhost:3000"}
     @DeleteMapping("/delete/prestador/{id}")
     public String DeleteEntregador(@PathVariable("id") String id) {
-       // var token = SessionDto.showToken();
-        //if (token != null) {
+       
             Optional<PrestadorDeServico> prestadorEncontrado = this.repositorioDePrestadores.findById(id);
-            /*
-            if (prestadorEncontrado.isEmpty()) {
-                return "";
-            } */
+            
             this.repositorioDePrestadores.deleteById(id);
             return prestadorEncontrado.get().getId();
-        //}
-
-        //return "";
+       
     }
 
     @PutMapping("/update/prestador/{id}")

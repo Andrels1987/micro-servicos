@@ -1,101 +1,131 @@
-import React, { useEffect, useState } from 'react'
-import { useGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados'
-import { format } from 'date-fns'
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import {  useLazyGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados';
+import { format } from 'date-fns';
 import { Link } from 'react-router';
-const Registros = ({ token }) => {
+import { AuthContext } from '../../features/api/context/AuthProvider';
 
-    const [modoBusca, setModoBusca] = useState('data');
-    const { data: todosOsRegistros } = useGetServicosPrestadosQuery({ token });
-    const [blocoApt, setBlocoApt] = useState({ bloco: "", apartamento: "" })
-    const [registros, setRegistros] = useState([])
-    const [data, setData] = useState("")
+import Loading from '../../Loading';
 
+const Registros = () => {
+  const { token } = useContext(AuthContext);
+  const [ fetchServicosrestados, {data: todosOsRegistros, isLoading }] = useLazyGetServicosPrestadosQuery( );
 
+  const [modoBusca, setModoBusca] = useState('data');
+  const [registros, setRegistros] = useState([]);
+  const [filtroData, setFiltroData] = useState('');
+  const [filtroBlocoApt, setFiltroBlocoApt] = useState({ bloco: '', apartamento: '' });
 
-    useEffect(() => {
-        if (todosOsRegistros) {
-            setRegistros(old => todosOsRegistros)
-        }
-        if (registros.length > 0) {
-            handleSearch()
-        }
+  // Atualiza a lista de registros assim que a API retornar
+  useEffect(() => {
+    if(token){
+      fetchServicosrestados({token});
+    }
+  }, [token, fetchServicosrestados]);
 
-    }, [todosOsRegistros, data, blocoApt])
+  useEffect(() => {
+    if(todosOsRegistros){
+      setRegistros(todosOsRegistros)
+    }
+  }, [todosOsRegistros]);
+  
+  
+  console.log(todosOsRegistros)
+  // Função de filtro (por data ou bloco/apartamento)
+  const handleSearch = useCallback(() => {
+    let filtrados = [];
 
-    const handleSearch = () => {
-        if (modoBusca === 'data') {
-            if (data !== '') {
-                setRegistros([...todosOsRegistros.filter(r => r.dataInicioDoServico.includes(data))])
-            }
-        } else {
-            setRegistros([...todosOsRegistros.filter(r => {
-                if (r.apartamento !== null && r.bloco !== null) {
-                    return r.apartamento.includes(blocoApt.apartamento) && r.bloco.includes(blocoApt.bloco)
-                }
-            })])
-
-        }
+    if (modoBusca === 'data') {
+      filtrados = todosOsRegistros.filter(registro =>
+        registro.dataInicioDoServico?.includes(filtroData)
+      );
+    } else {
+      filtrados = todosOsRegistros.filter(registro =>
+        registro.morador?.apartamento?.trim().includes(filtroBlocoApt.apartamento.trim()) &&
+        registro.morador?.bloco?.trim().includes(filtroBlocoApt.bloco.trim())
+      );
     }
 
-    const limitarNome = (nome) => {
-        return nome.split(" ")[0];
-    }
-    const limitarData = (data) => {
-        return format(new Date(data), "dd-MM-yyyy");
-    
-    }
-console.log(registros);
+    setRegistros(filtrados.length > 0 ? filtrados : todosOsRegistros);
+  }, [modoBusca, filtroData, filtroBlocoApt, todosOsRegistros]);
 
-    return (
-        <div style={{ color: "white" }}>
-            <div className='modo-busca'>
-                <label htmlFor="nome">Modo de busca</label>
-                <select onChange={(e) => setModoBusca(e.target.value)} value={modoBusca} name="" id="">
-                    <option value="data">Data</option>
-                    <option value="bloco-apartamento">Apartamento e bloco</option>
-                </select>
+  useEffect(() => {
+    if (registros.length > 0) handleSearch();
+  }, [handleSearch, registros.length]);
+
+  // Helpers
+  const limitarNome = (nome) => nome?.split(' ')[0] || '';
+  const formatarData = (data) => format(new Date(data), 'dd-MM-yyyy');
+
+  return (
+    <div style={{ color: 'white' }}>
+    {isLoading ? <Loading /> : (
+      <>
+      <div className="modo-busca">
+        <label htmlFor="modo">Modo de busca</label>
+        <select
+          id="modo"
+          value={modoBusca}
+          onChange={(e) => setModoBusca(e.target.value)}
+        >
+          <option value="data">Data</option>
+          <option value="bloco-apartamento">Apartamento e bloco</option>
+        </select>
+      </div>
+
+      <form>
+        {modoBusca === 'data' ? (
+          <input
+            type="date"
+            placeholder="Data do serviço"
+            value={filtroData}
+            onChange={(e) => setFiltroData(e.target.value)}
+          />
+        ) : (
+          <>
+            <input
+              type="text"
+              placeholder="Apartamento"
+              value={filtroBlocoApt.apartamento}
+              onChange={(e) => setFiltroBlocoApt({ ...filtroBlocoApt, apartamento: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Bloco"
+              value={filtroBlocoApt.bloco}
+              onChange={(e) => setFiltroBlocoApt({ ...filtroBlocoApt, bloco: e.target.value })}
+            />
+          </>
+        )}
+      </form>
+
+      <div className="legenda">
+        <p className="morador">Morador</p>
+        <p className="apartamento">Apartamento</p>
+        <p className="bloco">Bloco</p>
+        <p className="prestador">Prestador</p>
+        <p className="entrada">Entrada</p>
+        <p className="saida">Saída</p>
+      </div>
+
+      <section className="registros">
+        {registros.map((registro) => (
+          <Link key={registro.id} to={`./detalhes-do-registro/${registro.id}`}>
+            <div className="registro">
+              <p className="morador">{registro.morador?.nome || '*******'}</p>
+              <p className="apartamento">{registro.morador?.apartamento || '*****'}</p>
+              <p className="bloco">{registro.morador?.bloco || '**'}</p>
+              <p className="prestador">{limitarNome(registro.prestador?.nome)}</p>
+              <p className="entrada">{formatarData(registro.dataInicioDoServico)}</p>
+              <p className="saida">{registro.dataEncerramentoDoServico ? formatarData(registro.dataEncerramentoDoServico) : "*******"}</p>
             </div>
-            <form action="">
-                {modoBusca === 'data' ? (
-                    <div>
-                        <input type="text" placeholder='data do serviço' name='nome' id='nome' onChange={(e) => setData(e.target.value)} />
-                    </div>
-                ) : (
-                    <div>
-                        <div>
-                            <input type="text" placeholder='Apartamento' name='apartamento' id='apartamento' onChange={(e) => setBlocoApt({ ...blocoApt, apartamento: e.target.value })} />
-                        </div>
-                        <div>
-                            <input type="text" placeholder='Bloco' name='bloco' id='bloco' onChange={(e) => setBlocoApt({ ...blocoApt, bloco: e.target.value })} />
-                        </div>
-                    </div>
-                )}
-            </form>
-            <div className='legenda'>
-                <p className='morador'>Morador</p>
-                <p className='apartamento'>Apartamento</p>
-                <p className='bloco'>Bloco</p>
-                <p className='prestador'>Prestador</p>
-                <p className='entrada'>Entrada</p>
-                <p className='saida'>Saida</p>
-            </div>
-            <section className='registros'>
-                {registros && registros.map(registro => (
-                    <Link key={registro.id} to={`./detalhes-do-registro/${registro.id}`}>
-                    <div className='registro' >
-                        <p className="morador">{registro.nomeMorador }</p>
-                        <p className="apartamento">{registro.apartamento}</p> 
-                        <p className="bloco">{registro.bloco}</p>
-                        <p className="prestador">{limitarNome(registro.nomePrestador)}</p>
-                        <p className='entrada'>{limitarData(registro.dataInicioDoServico)}</p>
-                        <p className='saida'>{limitarData(registro.dataEncerramentoDoServico)}</p>
-                    </div>
-                    </Link>
-                ))}
+          </Link>
+        ))}
+      </section>
+      </>
+    )}
+      
+    </div>
+  );
+};
 
-            </section>
-        </div>
-    )
-}
-
-export default Registros
+export default Registros;

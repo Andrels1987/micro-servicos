@@ -145,6 +145,7 @@ public class ServicoMoradorImpl implements ServicoMorador {
             return "";
         }
 
+      
         Morador moradorSalvo = optionalMorador.get();
         // updatedmorador.setId(moradorSalvo.getId());
         if (updatedmorador.getVeiculos() != null) {
@@ -157,9 +158,7 @@ public class ServicoMoradorImpl implements ServicoMorador {
         }
 
         List<DependenteDto> dependentes = updatedmorador.getDependentes();
-        System.out.println();
-        System.out.println(dependentes);
-        System.out.println();
+        
         if (dependentes != null && !dependentes.isEmpty()) { // Fixed the condition
             Set<String> existingIds = dependentes.stream()
                     .map(DependenteDto::get_id)
@@ -174,9 +173,7 @@ public class ServicoMoradorImpl implements ServicoMorador {
                             .collect(Collectors.toList())
                     : new ArrayList<>();
 
-                    System.out.println();
-            System.out.println("newDependentes : " + newDependentes);
-            System.out.println();
+                  
             dependentes.addAll(newDependentes);
         }
 

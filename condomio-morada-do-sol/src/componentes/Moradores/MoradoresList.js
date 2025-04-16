@@ -1,145 +1,203 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import Loading from '../../Loading'
-import BtnAdicionar from '../Outros/BtnAdicionar'
-const MoradoresList = ({ isLoading, isSuccess, error, isError, isLogado, moradores }) => {
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-    const [morador, setMorador] = useState({})
-    const [contador, setContador] = useState(5)
-    const [moradoresFiltrados, setMoradoresFiltrados] = useState([])
+import Loading from '../../Loading';
+import BtnAdicionar from '../Outros/BtnAdicionar';
+import { AuthContext } from '../../features/api/context/AuthProvider';
+import { useGetMoradoresQuery } from '../../features/api/moradores/apiSliceMoradores';
+
+const MoradoresList = () => {
+   
+    const { token } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const [moradorBusca, setMoradorBusca] = useState({ nome: '', apartamento: '', bloco: '' });
     const [modoBusca, setModoBusca] = useState('nome');
-    const navigate = useNavigate()      
+    const [listaDeMoradores, setListaDeMoradores] = useState([]);
+    const [contador, setContador] = useState(5);
+    const [msg, setMsg] = useState("")
 
+   
+      
+    const {
+        data: moradores,
+        isLoading,
+        isSuccess,
+        isError,
+        error,
+    } = useGetMoradoresQuery({ token }, {skip: !token});
 
-
+    // Atualiza a lista filtrada ao carregar os moradores
     useEffect(() => {
         if (moradores) {
-            if (isLogado === false) {
-                setMoradoresFiltrados([])
-                const timer = setInterval(() => {
-                    setContador(contador - 1)
-                    if (contador === 1) {
-                        navigate("/");
-                    }
-                }, 1000);
-                return () => clearInterval(timer)
-            } else {
-                setMoradoresFiltrados([...moradores])
-            }
-
+            setListaDeMoradores(moradores);
         }
-        if (moradoresFiltrados.length > 0) {
-            handleSearch()
-        }
+    }, [moradores]);
 
-        if (error) {
-            console.log("ERROR1 : ", error);
-            setMoradoresFiltrados([])
+    //atualiza o contador
+    useEffect(() => {
+        if ((isError && error) || !token) {
             const timer = setInterval(() => {
-                setContador(contador - 1)
-                if (contador === 1) {
-                    navigate("/");
-                }
+                setContador(prev => {
+                    return prev - 1;
+                });
             }, 1000);
-            return () => clearInterval(timer)       
+
+            return () => clearInterval(timer);
         }
-    }, [moradores, error, morador, isLogado, contador]);
+    }, [error, token, isError]);
 
+    // Lógica de busca e redirecionamento
+    useEffect(() => {
+        if (!moradores) return;
 
+        const { nome, apartamento, bloco } = moradorBusca;
+        const camposPreenchidos = nome || apartamento || bloco;
 
-    const mostratInfoMorador = (e) => {
-        e.preventDefault();
-        let parent = e.target.parentNode
-        let listamoradores = parent.parentNode;
-        let elements = listamoradores.getElementsByClassName("info")
-        let showElement = parent.getElementsByTagName("div");
-        for (let el of elements) {
-            if (showElement[0] === el) {
-                el.classList.toggle("show-info");
-            } else {
-                el.classList.remove("show-info");
-            }
+        if (camposPreenchidos) {
+            filtrarMoradores();
         }
+
+        
+    }, [moradorBusca, moradores]);
+
+    useEffect(() => {
+        if (contador === 0) {
+          navigate('/');
+        }
+      }, [contador, navigate]);
+
+    const selectModoBusca = (e) => {
+        setMsg("")
+        setMoradorBusca({ nome: '', apartamento: '', bloco: '' })
+        setModoBusca(e)
+    }
+    const filtrarMoradores = () => {
+        
+        if (!moradores) return;
+
+        let filtrados = [];
+
+        if (modoBusca === 'nome') {
+            filtrados = moradores.filter(m => {
+                const nomeCompleto = m.nome + " " + m.sobrenome;
+                return nomeCompleto.toLowerCase().includes(moradorBusca.nome.trim().toLowerCase())
+            });
+            filtrados.length === 0 ? setMsg(`Nenhum morador com esse ${modoBusca}`) : setMsg("")
+        } else {
+            filtrados = moradores.filter(m =>
+                m.apartamento.trim().includes(moradorBusca.apartamento.trim()) &&
+                m.bloco.trim().includes(moradorBusca.bloco.trim())
+            );
+            filtrados.length === 0 ? setMsg(`Nenhum morador com esse ${modoBusca}`) : setMsg("")
+
+        }
+
+        setListaDeMoradores(filtrados.length > 0 ? filtrados : moradores);
     };
 
-    const handleSearch = () => {
-        if(modoBusca === 'nome'){
-            if (morador.nome !== '') {
-                //moradoresFiltro = moradores.filter(mo => mo.nome.includes(morador.nome))
-                setMoradoresFiltrados([...moradores.filter(mo => mo.nome.includes(morador.nome))])
-            }
-        }else{
-            setMoradoresFiltrados([...moradores.filter(mo =>{
-                console.log("AQUI");                
-                return mo.apartamento.includes(morador.apartamento) && mo.bloco.includes(morador.bloco)
-            })])
-                
-            }
-        }
-    
-    
+    const handleInputChange = (e) => {        
+        const { name, value } = e.target;
+        setMoradorBusca(prev => ({ ...prev, [name]: value }));
+    };
 
-    let content;
-    if (isLoading) {
-        content = <Loading />
-    } else if (isSuccess) {
-
-        content =
-            <div className='form'>
-                <div className='modo-busca'>
-                    <label htmlFor="nome">Modo de busca</label>
-                    <select data-testid="select" onChange={(e) => setModoBusca(e.target.value)} value={modoBusca} name="" id="">
-                        <option value="nome">Nome</option>
-                        <option value="bloco-apartamento">Apartamento e bloco</option>
-                    </select>
-                </div>
-                <form action="">
-                    {modoBusca === 'nome' ? (
-                        <div>
-                            <input type="text" placeholder='Nome do morador' name='nome' id='nome' onChange={(e) => setMorador({ ...morador, nome: e.target.value })} />
-                        </div>
-                    ) : (
-                        <div>
-                            <div>
-                                <input type="text" placeholder='Apartamento' name='apartamento' id='apartamento' onChange={(e) => setMorador({ ...morador, apartamento: e.target.value })} />
-                            </div>
-                            <div>
-                                <input type="text" placeholder='Bloco' name='bloco' id='bloco' onChange={(e) => setMorador({ ...morador, bloco: e.target.value })} />
-                            </div>
-                        </div>
-                    )}
-                </form>""
-
-                <section className='dados'>
-                    <div className='lista-de-moradores'>
-                        {moradoresFiltrados.length === 0 ?
-                            (<p> Usuario deslogado : Voce sera redirecionado em {contador}</p>)
-                            :
-                            (moradoresFiltrados.map(morador => (
-                                <div className="morador" data-testid="quantity" key={morador.id} >
-                                   
-                                        <p className='nome-morador' onClick={(e) => mostratInfoMorador(e)}>{morador.nome} {morador.sobrenome}</p>
-                                        <p className="bloco">Bloco: <code>{morador.bloco}</code></p>
-                                        <p className="apartamento">Apartamento: <code >{morador.apartamento}</code></p>
-                                        <Link className='informacoes' to={`perfil/${morador.id}`}>Informações do morador</Link>
-                                
-                                </div>
-                            )))}
-                    </div>
-                </section>
+    const renderFormularioBusca = () => {
+        return modoBusca === 'nome' ? (
+            <div>
+                <input
+                    type="text"
+                    name="nome"
+                    placeholder="Nome do morador"
+                    value={moradorBusca.nome}
+                    onChange={handleInputChange}
+                />
+                <small style={{color: 'white', marginLeft: '1em'}}> {msg}</small>
             </div>
-    } else if (isError) {
-        content = <p> Usuario deslogado. Voce será redirecionado em {contador}</p>
-    }
+        ) : (
+            <div>
+                <input
+                    type="text"
+                    name="apartamento"
+                    placeholder="Apartamento"
+                    value={moradorBusca.apartamento}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="text"
+                    name="bloco"
+                    placeholder="Bloco"
+                    value={moradorBusca.bloco}
+                    onChange={handleInputChange}
+                />
+                <small>{msg}</small>
+            </div>
+        );
+    };
+
+    const renderMoradores = () => {
+        if (listaDeMoradores.length === 0) {
+            return <p style={{color: 'white'}}>Nenhum morador encontrado.</p>;
+        }
+
+        return listaDeMoradores.map(({ id, nome, sobrenome, bloco, apartamento }) => (
+            <div className="morador" data-testid="quantity" key={id}>
+                <Link to={`perfil/${id}`}>
+                <p className="nome-morador">{nome} {sobrenome}</p>
+                <p className="bloco">Bloco: <code>{bloco}</code></p>
+                <p className="apartamento">Apartamento: <code>{apartamento}</code></p>
+                </Link>
+            </div>
+        ));
+    };
+   
+    
+    const renderErro = () => {
+        if(!token) return <p style={{color: 'white'}}>Usuário deslogado. Você será redirecionado em {contador}...</p>;
+        if (!error) return null;
+        const mensagem = error.status === 'FETCH_ERROR'
+            ? 'Serviço indisponível'
+            : 'Usuário deslogado';
+        return <p style={{color: 'white'}}>{mensagem}. Você será redirecionado em {contador}...</p>;
+    };
 
     return (
         <div>
-            {content}
-            <div className='btn-adicionar'>
-                <BtnAdicionar link={"add-morador"} />
+            {isLoading && <Loading />}
+
+            {isSuccess && (
+                <div className="form">
+                    <div className="modo-busca">
+                        <label htmlFor="modoBusca">Modo de busca</label>
+                        <select
+                            data-testid="select"
+                            id="modoBusca"
+                            value={modoBusca}
+                            onChange={(e) => selectModoBusca(e.target.value)}
+                        >
+                            <option value="nome">Nome</option>
+                            <option value="bloco-apartamento">Apartamento e bloco</option>
+                        </select>
+                    </div>
+
+                    <form>
+                        {renderFormularioBusca()}
+                    </form>
+
+                    <section className="dados">
+                        <div className="lista-de-moradores">
+                            {renderMoradores()}
+                        </div>
+                    </section>
+                </div>
+            )}
+
+            {(!token || isError) && renderErro()}
+
+            <div className="btn-adicionar">
+                <BtnAdicionar link="add-morador" />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default MoradoresList
+export default MoradoresList;

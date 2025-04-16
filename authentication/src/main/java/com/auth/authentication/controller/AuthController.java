@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.auth.authentication.models.AuthRequest;
 import com.auth.authentication.models.AuthResponse;
 import com.auth.authentication.service.AuthService;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class AuthController {
@@ -20,7 +21,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @GetMapping("/auth/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         String token = authService.authenticate(request);
 

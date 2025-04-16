@@ -19,20 +19,21 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtUtils JwtUtil;
+    private JwtUtils jwtUtil;
 
     @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
     private UserRepositorio userRepo;
+    
     public String authenticate(AuthRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             
             new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
-
-        return JwtUtil.generateToken(request.getUsername());
+        String username = authentication.getName();
+        return jwtUtil.generateToken(username);
     }
 
     public void register(AuthRequest request){

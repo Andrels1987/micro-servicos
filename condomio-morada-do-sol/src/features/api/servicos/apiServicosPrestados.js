@@ -40,9 +40,10 @@ export const apiSliceServicosPrestados = createApi({
             invalidatesTags: ['servicos']
         }),
         registrarEncerramentoDoServico: builder.mutation({
-            query : ({registro}) =>({
+            query : ({registro, token   }) =>({
                 url : `update/registro/encerramento/${registro.id}`,
                 headers: {
+                    Authorization: `Bearer ${token}`,
                     "content-type": "application/json"
                 },
                 method: 'PUT',                
@@ -55,6 +56,7 @@ export const apiSliceServicosPrestados = createApi({
 
 export const {
     useGetServicosPrestadosQuery,
+    useLazyGetServicosPrestadosQuery,
     useAddServicoPrestadoMutation,
     useRegistrarEncerramentoDoServicoMutation
 } = apiSliceServicosPrestados

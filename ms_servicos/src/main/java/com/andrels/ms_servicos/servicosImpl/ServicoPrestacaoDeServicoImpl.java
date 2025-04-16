@@ -170,6 +170,9 @@ public class ServicoPrestacaoDeServicoImpl implements ServicoPrestacaoDeServico 
     @Override
     public List<ServicoPrestado> getServicosPrestadoPelaData(LocalDateTime data) {
         List<ServicoPrestado> servicosPrestados = repositorioServicosPrestados.getServicosPelaData(data);
+        if(!servicosPrestados.isEmpty()){
+            return servicosPrestados;
+        }
         return List.of();
     }
 
@@ -177,9 +180,9 @@ public class ServicoPrestacaoDeServicoImpl implements ServicoPrestacaoDeServico 
         // BUSCANDO MORADOR
         MoradorDto morador = null;
         try {
-            System.out.println("Antes da chamada");
+
             morador = clienteMorador.getMoradorPeloId(servico.getIdMorador());            
-            System.out.println("depois da chamada");
+         
         } catch (Exception e) {
             
             morador = new MoradorDtoError("Erro ao carregar informações do morador");

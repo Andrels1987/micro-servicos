@@ -1,154 +1,97 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { postPrestador, updatePrestador } from "../../features/api/prestadores/apiPrestadorSlice";
+import React, { useContext, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getPrestadorPeloId, postPrestador, updatePrestador } from "../../features/api/prestadores/apiPrestadorSlice";
 import Profile from "../Profile";
-//import { useGetTokenQuery } from "../../features/api/moradores/apiSliceMoradores";
 import { useParams } from "react-router";
+import { AuthContext } from "../../features/api/context/AuthProvider";
 
-
+// Modelo inicial do prestador
 const modeloPrestador = {
-  nome:"", 
+  nome: "", 
   sobrenome: "", 
   empresa: "", 
-  numeroDocumento:"", 
+  numeroDocumento: "", 
   foto: "", 
-  idVeiculo:"",
+  idVeiculo: "",
   servicoPrestado: ""
-}
-const Formprestador = ({ prestadores }) => {
-  const {idPrestador} = useParams();
-  const [newPrestador, setNewPrestador] = useState(modeloPrestador);
+};
+
+const FormPrestador = () => {
+  const { token } = useContext(AuthContext);
+  const { idPrestador } = useParams();
   const dispatch = useDispatch();
- // const { data: tokenObject } = useGetTokenQuery("")
+
+  const prestadorExistente = useSelector((state) => getPrestadorPeloId(state, idPrestador));
+  const [prestador, setPrestador] = useState(modeloPrestador);
 
   useEffect(() => {
-    let e = {};
-    if(idPrestador && newPrestador.nome === ""  ){
-      e = [...prestadores].find(item => item.id === idPrestador)     
-      setNewPrestador(old => e)     
+    if (prestadorExistente) {
+      setPrestador(prestadorExistente);
     }
-  }, [newPrestador,prestadores, idPrestador]);
-  
+  }, [idPrestador, prestadorExistente]);
 
-  const handleSave = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPrestador((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if(idPrestador){
-      dispatch(updatePrestador({prestador: newPrestador}));
-    }else{
-      dispatch(postPrestador({prestador: newPrestador}));
-      setNewPrestador(modeloPrestador);
+    if (idPrestador) {
+      dispatch(updatePrestador({ newPrestador: prestador, token }));
+    } else {
+      dispatch(postPrestador({ prestador, token }));
+      setPrestador(modeloPrestador);
     }
   };
-  
-  
- 
-  /* const salvarFoto = (e) => {
+
+  const handleAddVeiculo = (e) => {
     e.preventDefault();
-    setNewprestador({ ...newprestador, foto: newprestador.foto })
-  } */
-  const canSave =
-    newPrestador.nome &&
-    newPrestador.empresa &&
-    newPrestador.numeroDocumento &&
-    newPrestador.foto &&
-    newPrestador.servicoPrestado;
+    console.log("Adicionar veículo");
+  };
 
-    const addVeiculo = (e) => {
-      e.preventDefault();
-      console.log("adicionar veiculo");
-      
-    }
+  const isFormValid = 
+    prestador.nome &&
+    prestador.empresa &&
+    prestador.numeroDocumento &&
+    prestador.foto &&
+    prestador.servicoPrestado;
 
-  //HANDLE SUBMIT
   return (
-    <section className='prestadorForm ' style={{ color: "white" }}>
+    <section className="prestadorForm" style={{ color: "white" }}>
       <div className="profile">
         <section className="foto_prestador">
-          <Profile setData={setNewPrestador} data={newPrestador} />
+          <Profile setData={setPrestador} data={prestador} />
         </section>
       </div>
-      <form action="" className="form-add-prestador">
 
-      <div className="btn-add">
-          <button className="btn-add-veiculo" onClick={(e) => addVeiculo(e)}>Adicionar Veiculo</button>
-        </div>  
-        <div>
-          <label htmlFor="nome">Nome</label>
-          <input
-            type="text"
-            id="nome"
-            name="nome"
-            onChange={(e) =>
-              setNewPrestador({ ...newPrestador, nome: e.target.value })
-            }
-            value={newPrestador.nome || ""}
-          />
+      <form className="form-add-prestador" onSubmit={handleSubmit}>
+        <div className="btn-add">
+          <button className="btn-add-veiculo" onClick={handleAddVeiculo}>
+            Adicionar Veículo
+          </button>
         </div>
-        <div>
-          <label htmlFor="sobrenome">Sobrenome</label>
-          <input
-            type="text"
-            id="sobrenome"
-            name="sobrenome"
-            onChange={(e) =>
-              setNewPrestador({ ...newPrestador, sobrenome: e.target.value })
-            }
-            value={newPrestador.sobrenome || ""}
-          />
-        </div>
-        <div>
-          <label htmlFor="empresa">Empresa</label>
-          <input
-            type="text"
-            id="empresa"
-            name="empresa"
-            onChange={(e) =>
-              setNewPrestador({ ...newPrestador, empresa: e.target.value })
-            }
-            value={newPrestador.empresa || ""}
-          />
-        </div>
-        <div>
-          <label htmlFor="documento">RG/CPF</label>
-          <input
-            type="text"
-            id="documento"
-            name="documento"
-            onChange={(e) =>
-              setNewPrestador({
-                ...newPrestador,
-                numeroDocumento: e.target.value,
-              })
-            }
-            value={newPrestador.numeroDocumento || ""}
-          />
-        </div>   
-        <div>
-          <label htmlFor="servicoPrestado">Serviço</label>
-          <input
-            type="text"
-            id="servicoPrestado"
-            name="servicoPrestado"
-            onChange={(e) =>
-              setNewPrestador({
-                ...newPrestador,
-                servicoPrestado: e.target.value,
-              })
-            }
-            value={newPrestador.servicoPrestado || ""}
-          />
-        </div>   
-         
-          
-            <button className="salvar-prestador"
-              onClick={(e) => handleSave(e)}
-              disabled={!canSave}>
-              Salvar Prestador
-            </button>
+
+        <InputField label="Nome" name="nome" value={prestador.nome} onChange={handleInputChange} />
+        <InputField label="Sobrenome" name="sobrenome" value={prestador.sobrenome} onChange={handleInputChange} />
+        <InputField label="Empresa" name="empresa" value={prestador.empresa} onChange={handleInputChange} />
+        <InputField label="RG/CPF" name="numeroDocumento" value={prestador.numeroDocumento} onChange={handleInputChange} />
+        <InputField label="Serviço" name="servicoPrestado" value={prestador.servicoPrestado} onChange={handleInputChange} />
+
+        <button type="submit" className="salvar-prestador" disabled={!isFormValid}>
+          Salvar Prestador
+        </button>
       </form>
-
     </section>
   );
 };
 
-export default Formprestador;
+//reduz repetição de codigo e melhora a legibilidade do JSX
+const InputField = ({ label, name, value, onChange }) => (
+  <div>
+    <label htmlFor={name}>{label}</label>
+    <input type="text" id={name} name={name} value={value || ""} onChange={onChange} />
+  </div>
+);
+
+export default FormPrestador;

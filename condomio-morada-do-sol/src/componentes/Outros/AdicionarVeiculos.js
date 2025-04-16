@@ -1,113 +1,149 @@
-import React, { useState } from 'react'
-import { Box, Button, Modal, Typography } from '@mui/material'
+import React, { useContext, useEffect, useState } from 'react'
+import { Box, Button, Modal, TextField, TextareaAutosize } from '@mui/material'
 import { useEnviarVeiculoMutation, useLazyGetVeiculoPelaPlacaQuery } from '../../features/api/veiculos/veiculoApiSlice'
 import { useUpdateMoradorMutation } from '../../features/api/moradores/apiSliceMoradores'
+import { AuthContext } from '../../features/api/context/AuthProvider'
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
-
-const btnStyle = {
-    fontWeight: 'bold',
-    fontSize: '1.5em',
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
 }
 
-const AdicionarVeiculos = ({ morador, veiculo, setVeiculo, dadosMorador, setDadosMorador, refetch }) => {
-    
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const [triggerSearchVeiuloPeloId, { data: singleVeiculo }] = useLazyGetVeiculoPelaPlacaQuery()
+const btnStyle = {
+  fontWeight: 'bold',
+  fontSize: '1.5em',
+}
 
-    const [dadosAtualizadosMorador] = useUpdateMoradorMutation();
-    const [enviarDadosVeiculo] = useEnviarVeiculoMutation();
-    const [disableEnviar, setDisableEnviar] = useState(true)
-    const [disableAtualizar, setDisableAtualizar] = useState(true)
+const veiculoModel = {
+  placa: "",
+  modelo: "",
+  marca: "",
+  cor: "",
+  vaga: "",
+  tipoDeAutorizacao: "",
+  status_de_acesso: "",
+  nomeProprietario: "",
+  apartamento: "",
+  bloco: "",
+  documentoProprietario: "",
+  observacao: ""
+}
 
-    const sendDadosDoVeiculo = (e) => {
-        e.preventDefault()
-        console.log(veiculo);
+const AdicionarVeiculos = ({ morador, refetch }) => {
+  const { token } = useContext(AuthContext)
+  const [open, setOpen] = useState(false)
+  const [veiculo, setVeiculo] = useState(veiculoModel)
+  const [disableEnviar, setDisableEnviar] = useState(true)
+  const [disableAssociar, setDisableAssociar] = useState(true)
 
-        const resposta = enviarDadosVeiculo({ veiculo })
-        resposta.then((r) => {
-            console.log(r);
-            setDadosMorador({ ...dadosMorador, veiculos: [...dadosMorador.veiculos, r.data.id] })
-        })
+  const [buscarVeiculo] = useLazyGetVeiculoPelaPlacaQuery()
+  const [enviarVeiculo] = useEnviarVeiculoMutation()
+  const [atualizarMorador] = useUpdateMoradorMutation()
+
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => {
+    setOpen(false)
+    resetForm()
+  }
+
+  const resetForm = () => {
+    setVeiculo(veiculoModel)
+    setDisableEnviar(true)
+    setDisableAssociar(true)
+  }
+
+  useEffect(() => {
+    if (morador) {
+      setVeiculo({
+        ...veiculoModel,
+        nomeProprietario: `${morador.nome} ${morador.sobrenome}`,
+        apartamento: morador.apartamento,
+        bloco: morador.bloco,
+        documentoProprietario: morador.documento
+      })
+    }
+  }, [morador])
+
+  const handleChange = (field) => (e) => {
+    setVeiculo((prev) => ({ ...prev, [field]: e.target.value }))
+  }
+
+  const handleBuscarPlaca = async (e) => {
+    e.preventDefault()
+
+    const res = await buscarVeiculo({ placa: veiculo.placa })
+
+    if (res?.data?.err) {
+      setDisableEnviar(false)
+      setDisableAssociar(true)
+    } else {
+      const jaPossui = morador.veiculos?.some(v => v._id === res.data._id)
+      if (jaPossui) {
+        alert("O morador já possui esse veículo.")
         setDisableEnviar(true)
+        setDisableAssociar(true)
+      } else {
+        setVeiculo(res.data)
+        setDisableEnviar(true)
+        setDisableAssociar(false)
+      }
     }
+  }
 
-    const buscarVeiculoPelaPlaca = (e) => {
-        e.preventDefault();
-        let res = triggerSearchVeiuloPeloId({ placa: veiculo.placa });
-        res.then((res) => {
-            console.log("RESP : ", res.data);
-            if (res?.data.err) {
-                console.log('entrou aqui');
-                setDisableEnviar(false)
-                return;
-            } else {
-                setVeiculo(old => res.data)
-                for (const veiculo of morador.veiculos) {
-                    if (veiculo._id === res.data._id) {
-                        alert("O morador já possui esse veiculo")
-                        setDisableAtualizar(true)
-                        return;
-                    }
-                }
-                setDadosMorador({ ...dadosMorador, veiculos: [...dadosMorador.veiculos, res.data._id] })
-                setDisableAtualizar(false)
-            }
-        });
-    }
+  const handleEnviarVeiculo = async (e) => {
+    e.preventDefault()
+    await enviarVeiculo({ veiculo })
+    setDisableEnviar(true)
+  }
 
+  const handleAssociarVeiculo = async (e) => {
+    e.preventDefault()
+    const veiculoIds = morador.veiculos?.map(v => v._id) || []
+    await atualizarMorador({
+      morador: { ...morador, veiculos: [...veiculoIds, veiculo._id] },
+      token
+    })
+    refetch()
+    handleClose()
+  }
 
-    const associarVeiculoAoMorador = (e) => {
-        e.preventDefault();
-        console.log("DADOS MORADOR : ", dadosMorador);
-        const resposta = dadosAtualizadosMorador({ morador: dadosMorador })
-        resposta.then((res) => {
-            console.log("RESP : ", res);
-            refetch();
-        })
-    }
+  return (
+    <div>
+      <Button sx={btnStyle} onClick={handleOpen}>+</Button>
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={modalStyle}>
+          <form>
+            <TextField fullWidth margin="normal" label="Placa" value={veiculo.placa} onChange={handleChange('placa')} />
+            <Button onClick={handleBuscarPlaca}>Buscar</Button>
 
-   
-    
-    return (
-        <div>
-            <Button sx={btnStyle} onClick={handleOpen}>+</Button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <section>
-                        <input type="text" onChange={(e) => setVeiculo({ ...veiculo, placa: e.target.value })} name='placa' placeholder='placa' id='placa' />
-                        <button onClick={(e) => buscarVeiculoPelaPlaca(e)}>buscar</button>
-                    </section>
-                    <input type="text" onChange={(e) => setVeiculo({ ...veiculo, modelo: e.target.value })} name='modelo' placeholder='modelo' id='modelo' value={veiculo.modelo || ""} />
-                    <input type="text" onChange={(e) => setVeiculo({ ...veiculo, marca: e.target.value })} name='marca' placeholder='marca' id='marca' value={veiculo.marca || ""} />
-                    <input type="text" onChange={(e) => setVeiculo({ ...veiculo, cor: e.target.value })} name='cor' placeholder='cor' id='cor' value={veiculo.cor || ""} />
-                    <input type="text" onChange={(e) => setVeiculo({ ...veiculo, vaga: e.target.value })} name='vaga' placeholder='vaga' id='vaga' value={veiculo.vaga || ""} />
-                    <input type="text" onChange={(e) => setVeiculo({ ...veiculo, tipoDeAutorizacao: e.target.value })} name='tipo-autorização' value={veiculo.tipoDeAutorizacao || ""} placeholder='tipo-autorização' id='tipo-autorização' />
-                    <input type="text" onChange={(e) => setVeiculo({ ...veiculo, status_de_acesso: e.target.value })} name='acesso' placeholder='acesso' id='acesso' value={veiculo.status_de_acesso || ""} />
-                    <textarea onChange={(e) => setVeiculo({ ...veiculo, observacao: e.target.value })} name="observacao" id="observacao" value={veiculo.observacao || ""}></textarea>
-                    <Button disabled={disableEnviar} onClick={(e) => sendDadosDoVeiculo(e)}>Enviar</Button>
-                    <Button disabled={disableAtualizar} onClick={(e) => associarVeiculoAoMorador(e)}>Associar veiculo ao morador</Button>
-                </Box>
-            </Modal>
-        </div>
-    )
+            <TextField fullWidth margin="normal" label="Modelo" value={veiculo.modelo} onChange={handleChange('modelo')} />
+            <TextField fullWidth margin="normal" label="Marca" value={veiculo.marca} onChange={handleChange('marca')} />
+            <TextField fullWidth margin="normal" label="Cor" value={veiculo.cor} onChange={handleChange('cor')} />
+            <TextField fullWidth margin="normal" label="Vaga" value={veiculo.vaga} onChange={handleChange('vaga')} />
+            <TextField fullWidth margin="normal" label="Tipo de Autorização" value={veiculo.tipoDeAutorizacao} onChange={handleChange('tipoDeAutorizacao')} />
+            <TextField fullWidth margin="normal" label="Status de Acesso" value={veiculo.status_de_acesso} onChange={handleChange('status_de_acesso')} />
+            <TextareaAutosize
+              minRows={3}
+              placeholder="Observação"
+              style={{ width: '100%', marginTop: '1em' }}
+              value={veiculo.observacao}
+              onChange={handleChange('observacao')}
+            />
+
+            <Button fullWidth sx={{ mt: 2 }} disabled={disableEnviar} onClick={handleEnviarVeiculo}>Enviar</Button>
+            <Button fullWidth sx={{ mt: 1 }} disabled={disableAssociar} onClick={handleAssociarVeiculo}>Associar ao morador</Button>
+          </form>
+        </Box>
+      </Modal>
+    </div>
+  )
 }
 
 export default AdicionarVeiculos

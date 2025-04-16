@@ -13,7 +13,7 @@ export const apiSliceMoradores = createApi({
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
+                    "content-type": "application/json"
                 },
             }),
             providesTags: ['moradores']
@@ -48,10 +48,11 @@ export const apiSliceMoradores = createApi({
             invalidatesTags: ['moradores']
         }),
         updateMorador: builder.mutation({
-            query: ({morador}) => ({
+            query: ({morador,token}) => ({
                 url: `/update/morador/${morador.id}`,
                 method: 'PUT',
                 headers: {
+                    Authorization: `Bearer ${token}`,
                     "content-type": "application/json"
                 },
                 body: {
@@ -102,24 +103,6 @@ export const apiSliceMoradores = createApi({
                     _id: dependente.id
                 },
                 method: 'PUT',
-            }),
-            invalidatesTags: ['moradores']
-        }),
-        getLogin: builder.mutation({
-            query: ({email, password}) => ({
-                url: "/auth/login",
-                method: 'POST',  
-                headers:{
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'Access-Control-Allow-Origin': ['http://localhost:3000'],
-                    'Access-Control-Allow-Credentials': 'true',
-                    'Host': ['http://localhost:3000'],
-                },                          
-                body: {
-                    loginEmail: email,
-                    password: password
-                }
             }),
             invalidatesTags: ['moradores']
         }),
@@ -181,13 +164,6 @@ export const apiSliceMoradores = createApi({
             }),
             providesTags: ['moradores']
         }),
-        getToken: builder.query({
-            query: () => ({
-                url: `/auth/token`,
-                method: 'GET',
-            }),
-            providesTags: ['moradores']
-        }),
         getProprietarioPeloIdVeiculo: builder.query({
             query: ({token, id}) => ({
                 url: `/moradores/proprietario/${id}`,
@@ -229,11 +205,9 @@ export const {
     useAddEntregaMutation,
     useGetEntregasQuery,
     useGetVeiculosQuery,
-    useGetLoginMutation,
     useGetVeiculoPeloIdQuery,
     useGetProprietarioPeloIdVeiculoQuery,
     useGetProprietarioPelaPlacaVeiculoQuery,
     useLogoutAppMutation, 
-    useGetTokenQuery,
     useAssociarDependenteAoMoradorMutation
 } = apiSliceMoradores

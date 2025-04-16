@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.andrels.ms_servicos.modelos.ResponseId;
 import com.andrels.ms_servicos.modelos.ServicoPrestado;
 import com.andrels.ms_servicos.modelos.ServicoPrestadoDto;
 import com.andrels.ms_servicos.servicosImpl.ServicoPrestacaoDeServicoImpl;
@@ -34,6 +35,7 @@ public class ControleServicoPrestado {
     }
     @GetMapping("/servicosprestados/{id}")
     public ResponseEntity<ServicoPrestadoDto> getServicosPrestadosPeloId(@PathVariable("id") String id){
+        
         ServicoPrestadoDto servico = servicoPrestacaoDeServicoImpl.getServicoPeloId(id);
         return ResponseEntity.ok().body(servico);
         
@@ -54,9 +56,9 @@ public class ControleServicoPrestado {
         return ResponseEntity.ok().body(resposta);
     }
     @PutMapping("update/registro/encerramento/{id}")
-    public ResponseEntity<String> registrarEncerramento(@PathVariable("id") String id) {
+    public ResponseEntity<ResponseId> registrarEncerramento(@PathVariable("id") String id) {
         var resposta = this.servicoPrestacaoDeServicoImpl.registrarEncerramentoDoServico(id);
     
-        return ResponseEntity.ok().body(resposta);
+        return ResponseEntity.ok().body(new ResponseId(resposta));
     }
 }

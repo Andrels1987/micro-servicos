@@ -1,6 +1,5 @@
 package com.andrels.ms_servicos.configuracao;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,7 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth ->{
             auth.requestMatchers(HttpMethod.GET, "/api/servicosprestados/**").permitAll();
+            auth.requestMatchers(HttpMethod.POST, "/api/servicosprestados/add/**").authenticated();
             auth.anyRequest().authenticated();
         })
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

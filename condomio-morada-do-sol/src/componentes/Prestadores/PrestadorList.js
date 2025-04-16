@@ -1,112 +1,128 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { AuthContext } from "../../features/api/context/AuthProvider";
+import { fetchPrestadores } from "../../features/api/prestadores/apiPrestadorSlice";
 import BtnAdicionar from "../Outros/BtnAdicionar";
 
-const PrestadorList = ({ prestadores }) => {
-  
-  const [modoBusca, setModoBusca] = useState('nome');
-  const [prestador, setPrestador] = useState({nome: "", numeroDocumento: ""});
-  const [listaPrestadores, setListaPrestadores] = useState([]);
-  const [msgNaoEncontrado, setmsgNaoEncontrado] = useState("")
+const PrestadorList = () => {
+  const [modoBusca, setModoBusca] = useState("nome");
+  const [busca, setBusca] = useState({ nome: "", numeroDocumento: "" });
+  const [listaDePrestadores, setListaDePrestadores] = useState([]);
+  const [mensagemErro, setMensagemErro] = useState("");
 
+  const dispatch = useDispatch();
+  const { token } = useContext(AuthContext);
+  const prestadores = useSelector((state) => state.prestador.prestadores);
 
-  
-   const filtrarPrestador = () =>{
-     let Rprestadores = prestadores.filter(item => 
-      (prestador.nome && item.nome.includes(prestador.nome)) || 
-      (prestador.numeroDocumento && item.numeroDocumento.includes(prestador.numeroDocumento))
-    );
-    
-    if(Rprestadores.length === 0 && prestador.nome !== "" || Rprestadores.length === 0 && prestador.numeroDocumento !== "" ){
-      setmsgNaoEncontrado(`Nenhum prestador com esse ${modoBusca}`)
-    }else{
-      setmsgNaoEncontrado("")
-    }
-    setListaPrestadores(Rprestadores.length === 0 ? prestadores : Rprestadores);
-    
-  }
-    
-
+  // Fetch ao carregar
   useEffect(() => {
-    
-    if(prestadores.length > 0 || prestador.nome === ""){
-      setListaPrestadores(prestadores)
+    if (token) dispatch(fetchPrestadores(token));
+  }, [dispatch, token]);
+
+  // Função de filtro
+  const aplicarFiltro = useCallback(() => {
+    let resultado = [];
+
+    if (modoBusca === "nome") {
+      resultado = prestadores.filter((p) =>
+        p.nome.toLowerCase().includes(busca.nome.toLowerCase().trim())
+      );
+    } else {
+      resultado = prestadores.filter((p) =>
+        p.numeroDocumento.includes(busca.numeroDocumento.trim())
+      );
     }
-    if(prestadores.nome !== "" && prestadores.numeroDocumento !== ""){
-      filtrarPrestador();
+
+    if (resultado.length === 0 && (busca.nome || busca.numeroDocumento)) {
+      setMensagemErro(`Nenhum prestador com esse ${modoBusca}`);
+    } else {
+      setMensagemErro("");
     }
-  }, [prestador, prestadores]) 
-  
-const atualizarFiltro = (valor) => {
-  setPrestador(prev => ({
-    nome : modoBusca === "nome" ? valor : "",
-    numeroDocumento : modoBusca === "documento" ? valor : ""
-  }))
-}
-  
+
+    setListaDePrestadores(busca.nome || busca.numeroDocumento ? resultado : prestadores);
+  }, [modoBusca, busca, prestadores]);
+
+  // Atualiza lista filtrada ao alterar busca ou prestadores
+  useEffect(() => {
+    if (prestadores.length > 0) {
+      aplicarFiltro();
+    }
+  }, [busca, prestadores, aplicarFiltro]);
+
+  const handleBuscaChange = (valor) => {
+    setBusca((prev) => ({
+      nome: modoBusca === "nome" ? valor : "",
+      numeroDocumento: modoBusca === "documento" ? valor : "",
+    }));
+  };
 
   return (
     <div className="form">
-      <div data-testid="modo-busca" className='modo-busca'>
+      <div className="modo-busca" data-testid="modo-busca">
         <label htmlFor="select">Modo de busca</label>
-        <select aria-label="selecteModoBusca"onChange={(e) => setModoBusca(e.target.value)} value={modoBusca} name="select" id="select">
+        <select
+          aria-label="selectModoBusca"
+          id="select"
+          value={modoBusca}
+          onChange={(e) => setModoBusca(e.target.value)}
+        >
           <option value="nome">Nome</option>
           <option value="documento">RG/CPF</option>
         </select>
       </div>
-      
-      <form action="" aria-label="form-modo-busca">
-        {modoBusca === 'nome' ? (
-          <div>
-            <input name="nome" id="nome" type="text" placeholder='Nome do prestador' onChange={(e) => atualizarFiltro(e.target.value)}  />
-          </div>
-        ) : (
-          <div>
-            <div>
-              <input type="text" name="documento" id="documento" placeholder='Documento'   onChange={(e) => atualizarFiltro(e.target.value)}  />
-            </div>
-          </div>
-        )}
+
+      <form aria-label="form-modo-busca">
+        <input
+          type="text"
+          placeholder={modoBusca === "nome" ? "Nome do prestador" : "Documento"}
+          value={modoBusca === "nome" ? busca.nome : busca.numeroDocumento}
+          onChange={(e) => handleBuscaChange(e.target.value)}
+        />
       </form>
-      <small style={{color: 'rgba(234, 112, 82, 0.78)', fontStyle: 'italic'}}>{msgNaoEncontrado}</small>
+
+      {mensagemErro && (
+        <small style={{ color: "rgba(234, 112, 82, 0.78)", fontStyle: "italic" }}>
+          {mensagemErro}
+        </small>
+      )}
+
       <section className="dados">
         <div className="lista-de-prestadores">
-        <div className="legenda">
-          <p className="imagem">Foto</p>
-          <p className="prestador-nome">Nome</p>
-          <p className="empresa">Empresa</p>
-          <p className="documento">documento</p>
-        </div>
-        {listaPrestadores.length === 0 ? (
-          <h1>Nenhum prestador encontrado</h1>
-        ) : (
-          listaPrestadores.map((prestador) => (
-            <div data-testid="prestador" className="prestador" key={prestador.id}>
-            
-              <Link data-testid="prest-profile" to={`perfil-prestador/${prestador.id}`}>                    
-              <div  className={`info`} >
-                  <div className="img">
-                  <img
-                    src={prestador.foto ? prestador.foto : "./logo192.png"}
-                    alt="foto"
-                  />                  
-                  </div>
-                  <p className="prestador-nome">{prestador.nome}</p>
-                  <p className="empresa"><code>{prestador.empresa}</code></p>
-                  <p className="documento"><code>{prestador.numeroDocumento}</code></p>                  
-                </div>
-              </Link>    
+          <div className="legenda">
+            <p className="imagem">Foto</p>
+            <p className="prestador-nome">Nome</p>
+            <p className="empresa">Empresa</p>
+            <p className="documento">Documento</p>
+          </div>
 
-            </div>
-          ))
-        )}
+          {listaDePrestadores.length === 0 ? (
+            <h1>Nenhum prestador encontrado</h1>
+          ) : (
+            listaDePrestadores.map((p) => (
+              <div className="prestador" data-testid="prestador" key={p.id}>
+                <Link to={`perfil-prestador/${p.id}`} data-testid="prest-profile">
+                  <div className="info">
+                    <div className="img">
+                      <img
+                        src={p.foto ? p.foto : "./logo192.png"}
+                        alt="foto"
+                      />
+                    </div>
+                    <p className="prestador-nome">{p.nome}</p>
+                    <p className="empresa"><code>{p.empresa}</code></p>
+                    <p className="documento"><code>{p.numeroDocumento}</code></p>
+                  </div>
+                </Link>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
-        <div className="btn-adicionar">
-          <BtnAdicionar  link={"add-prestador"}/>
-        </div>
-
+      <div className="btn-adicionar">
+        <BtnAdicionar link={"add-prestador"} />
+      </div>
     </div>
   );
 };

@@ -17,7 +17,6 @@ export const userSlice = createSlice({
     }
 })
 
-export const getUserInfo = (state) => {
-    return state.user}
+export const getUserInfo = (state) => {return state.user}
 export const { keepUserInfo } = userSlice.actions
 export default userSlice.reducer;

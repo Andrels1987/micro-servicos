@@ -6,17 +6,21 @@ import { store } from "./store_repo/store";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AuthProvider from "./features/api/context/AuthProvider";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-     {/*  <ApiProvider api={apiSliceMoradores}> </ApiProvider> */}
-        <Provider store={store}>
+
+      {/*  <ApiProvider api={apiSliceMoradores}> </ApiProvider> */}
+      <Provider store={store}>
+        <AuthProvider>
           <App />
-        </Provider>
-      
+        </AuthProvider>
+      </Provider>
+
     </BrowserRouter>
   </React.StrictMode>
 );
