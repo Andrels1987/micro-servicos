@@ -19,7 +19,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          
+
       - name: Instalar Maven
         run: sudo apt-get install maven
 
@@ -32,6 +32,6 @@ jobs:
 
       - name:  Instalar dependencias do frontend
         run: |
-          cd condominio-morada-sol
+          cd condominio-morada-do-sol
           npm install
           npm run build
