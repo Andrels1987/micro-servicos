@@ -1,4 +1,4 @@
-	import React, { useContext, useEffect } from "react";
+	import React from "react";
 import "./App.css";
 
 
@@ -19,8 +19,6 @@ import Veiculos from "./componentes/Veiculos/Veiculos";
 import PerfilVeiculo from "./componentes/Veiculos/PerfilVeiculo";
 
 import RegistrarEntrada from "./componentes/Registros/RegistrarEntrada";
-
-import { useGetVeiculosQuery } from "./features/api/veiculos/veiculoApiSlice";
 import Login from "./componentes/LoginRegistration/Login";
 
 import PrestadorList from "./componentes/Prestadores/PrestadorList";
@@ -28,35 +26,10 @@ import PerfilPrestador from "./componentes/Prestadores/PerfilPrestador";
 import FormPrestador from "./componentes/Prestadores/FormPrestador";
 import ArticleIcon from '@mui/icons-material/Article';
 import Registros from "./componentes/Registros/Registros";
-import { AuthContext } from "./features/api/context/AuthProvider";
 import PerfilRegistro from "./componentes/Registros/PerfilRegistro";
 
 
 const App = () => { 
-
-  const {token} = useContext(AuthContext);
-  
-  
- 
-   
-   const {
-     data: veiculos,
-     isLoading: isLoadingVeiculos,
-     isSuccess: isSuccessVeiculos,
-     isError: isErrorVeiculos,
-     error: errorVeiculos,
-     refetch: refetchVeiculos,
-     } = useGetVeiculosQuery({ token })
-     
-  useEffect(() => {
-      
-    
-  }, [  refetchVeiculos]); 
-
-
-
-  
-
  
   const makeLogout = async (e) => {
     //const t = dispatch((logoutApp))
@@ -105,33 +78,32 @@ const App = () => {
           <Routes>
                 <Route path="/" element={<HomePage />}>
                 <Route index element={<Login />} />
-             <Route path={"prestadores"} element={<PrestadorPage token={token}/>}>
-                <Route index element={<PrestadorList token={token} />} />
-                <Route path={"add-prestador"} element={<FormPrestador token={token}  />} />
+             <Route path={"prestadores"} element={<PrestadorPage/>}>
+                <Route index element={<PrestadorList  />} />
+                <Route path={"add-prestador"} element={<FormPrestador  />} />
                 <Route path={"update-prestador/:idPrestador"} element={<FormPrestador />} /> 
-                <Route path={"perfil-prestador/:idPrestador"} element={<PerfilPrestador token={token} />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo token={token} />} />           
+                <Route path={"perfil-prestador/:idPrestador"} element={<PerfilPrestador  />} />
+                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo  />} />           
               </Route> 
 
                 
               <Route path="moradores/" element={<MoradorLayout  />}>
                 <Route index element={<MoradoresList />} />
                 <Route path="add-morador/" element={<FormMoradores />} />
-                <Route path="perfil/:id" element={<PerfilMorador token={token} />} />
-                <Route path="update-morador/:id" element={<FormMoradores token={token} />} />
+                <Route path="perfil/:id" element={<PerfilMorador  />} />
+                <Route path="update-morador/:id" element={<FormMoradores  />} />
               </Route>
               <Route path="veiculos">
-                <Route index element={<Veiculos refetch={refetchVeiculos} veiculos={veiculos} isLoading={isLoadingVeiculos} isSuccess={isSuccessVeiculos} error={errorVeiculos} isError={isErrorVeiculos} token={token} />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo token={token} />} />
+                <Route index element={<Veiculos  />} />
+                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo  />} />
               </Route> 
               <Route path="registros">
                 <Route index element={<Registros />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo token={token} />} />
+                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo  />} />
                 <Route path={"registrar-entrada/:idPrestador"} element={<RegistrarEntrada />} />
                 <Route path={"detalhes-do-registro/:idRegistro"} element={<PerfilRegistro />} /> 
               </Route> 
-              {/* 
-              */}
+              
             </Route>
           </Routes>
         </div>

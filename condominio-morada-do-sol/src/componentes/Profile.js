@@ -15,7 +15,7 @@ const Profile = ({ setData, data }) => {
     if(data.foto === ""){
       setIsLigada(false)
     }
-  }, [])
+  }, [data.foto])
   
     
   const capture = React.useCallback(() => {
@@ -23,7 +23,7 @@ const Profile = ({ setData, data }) => {
     setData(old => {
       return  {...data, foto:pictureSrc}
     });
-  }); 
+  }, [data, setData]); 
  
   
   return (

@@ -1,14 +1,13 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import Loading from '../../Loading'
-import { useGetMoradorPeloIdQuery, useUpdateMoradorMutation } from '../../features/api/moradores/apiSliceMoradores'
+import { useGetMoradorPeloIdQuery } from '../../features/api/moradores/apiSliceMoradores'
 
 import { useEffect } from 'react'
 
 import AdicionarVeiculos from '../Outros/AdicionarVeiculos'
 import AdicionarDependente from '../Outros/AdicionarDependente'
-import { skipToken } from '@reduxjs/toolkit/query'
 import { AuthContext } from '../../features/api/context/AuthProvider'
 
 
@@ -28,11 +27,6 @@ const PerfilMorador = () => {
       navigate("/")
     }
   }, [navigate, error])
-
-  useEffect(() => {
-    
-  }, [morador])
-  
  
 
 

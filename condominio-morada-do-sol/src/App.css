@@ -75,6 +75,7 @@
 }
 .view-dados{
   padding: 0px .8em;
+  height: calc(100% - 50px);
 }
 .container-app .area-de-dados .form{
   margin-top: 1px;
@@ -87,6 +88,53 @@
   font-size: 12px;
   font-weight: bold;
   
+}
+.home{
+  height: 100%;
+}
+.container-app .area-de-dados .home .login{
+  overflow: hidden;
+  background: linear-gradient(to right, #5f6464, #231c23);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container-app .area-de-dados .home .form-login{
+  margin-top: 1px;
+  width: 350px;
+  height: 400px;
+  padding: 2em 2em;
+  border: solid 1px rgb(178,176,176);
+  border-radius: 5px;
+  display: flex;
+  padding-left: 1em;
+  color: rgb(254, 248, 254);
+  flex-direction: column;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 1.5em;
+}
+.mb-3{
+  display: flex;
+  flex-direction: column;
+}
+.mb-3 input{
+  display: flex;
+  flex-direction: column;
+  border: none;
+  border-bottom: 1px solid #000000;
+  letter-spacing: 1px;
+  background-color: rgb(78, 77, 77);
+  color: white;
+  font-weight: bold;
+}
+small.form-text{
+  align-self: center;
+  font-weight: 700;
+  font-size: 20px;
+  margin: 10px;
+  color: #b4b3b8;
 }
 .btn-adicionar{
   display: flex;
@@ -817,10 +865,28 @@ option{
 }
  .perfil-veiculo-card .perfil-veiculo-info{
   height: 100px;
-  position: absolute;
-  left: 125px;
-  top: 10px;
+  margin-left: 130px;
+  margin-top: 1em;
+} 
+
+.proprietario-info{
+  height: 100px;
+  margin-left: 130px;
+  margin-top: 1em;
 }
+.min-h-screen{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2em;
+}
+.max-w-md{
+  width: 100%;
+  height: 100%;
+}
+
 
 
 
@@ -840,26 +906,90 @@ height: 590px;
   color: rgb(255, 255, 255);
   font-weight: bolder;
 }
-.listaveiculos{
-  margin-top: 1em;
-  height: 500px;
-  overflow-y: auto;
- 
+
+
+.veiculos-container {
+  background-color: #1f1e1e;
+  height: 100%;
+  padding: .5rem;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
 }
-.listaveiculos .item-veiculo{
-  padding: .3em 1em;
-  display: flex;
-  align-items: center;
-  gap: .3em;
+
+.veiculos-busca {
+  max-width: 500px;
+  margin: 0 auto 1rem auto;
+}
+
+.veiculos-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #333;
   border-radius: 8px;
-  background-color: #292a2b;
-  color: aliceblue;
-  margin: .3em .1em;
+  background-color: #1e1e1e;
+  color: #fff;
+  font-size: 1rem;
+  transition: border-color 0.3s;
 }
-.listaveiculos .item-veiculo h3{
-  font-size: 1em;
-  color: rgb(180, 180, 180);
+
+.veiculos-input:focus {
+  outline: none;
+  border-color: #4f9ded;
+  box-shadow: 0 0 0 2px rgba(79, 157, 237, 0.4);
 }
+
+.veiculos-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: .5rem;
+  max-width: 100%;
+  max-height: 89%;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
+.veiculo-card {
+  background-color: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  padding: 1.25rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.veiculo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  border-color: #4f9ded;
+}
+
+.veiculo-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #4f9ded;
+}
+
+.veiculo-card p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.veiculo-nao-encontrado {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #aaa;
+  margin-top: 2rem;
+}
+
+.veiculos-erro {
+  text-align: center;
+  color: #ff6666;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}
+
 
 /* DETALHES DO SERVIÇO */
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Loading from '../../Loading';
@@ -48,31 +48,7 @@ const MoradoresList = () => {
     }, [error, token, isError]);
 
     // Lógica de busca e redirecionamento
-    useEffect(() => {
-        if (!moradores) return;
-
-        const { nome, apartamento, bloco } = moradorBusca;
-        const camposPreenchidos = nome || apartamento || bloco;
-
-        if (camposPreenchidos) {
-            filtrarMoradores();
-        }
-
-        
-    }, [moradorBusca, moradores]);
-
-    useEffect(() => {
-        if (contador === 0) {
-          navigate('/');
-        }
-      }, [contador, navigate]);
-
-    const selectModoBusca = (e) => {
-        setMsg("")
-        setMoradorBusca({ nome: '', apartamento: '', bloco: '' })
-        setModoBusca(e)
-    }
-    const filtrarMoradores = () => {
+    const filtrarMoradores = useCallback(() => {
         
         if (!moradores) return;
 
@@ -94,7 +70,32 @@ const MoradoresList = () => {
         }
 
         setListaDeMoradores(filtrados.length > 0 ? filtrados : moradores);
-    };
+    },[moradores, moradorBusca, modoBusca]);
+    useEffect(() => {
+        if (!moradores) return;
+
+        const { nome, apartamento, bloco } = moradorBusca;
+        const camposPreenchidos = nome || apartamento || bloco;
+
+        if (camposPreenchidos) {
+            filtrarMoradores();
+        }
+
+        
+    }, [moradorBusca, moradores, filtrarMoradores]);
+
+    useEffect(() => {
+        if (contador === 0) {
+          navigate('/');
+        }
+      }, [contador, navigate]);
+
+    const selectModoBusca = (e) => {
+        setMsg("")
+        setMoradorBusca({ nome: '', apartamento: '', bloco: '' })
+        setModoBusca(e)
+    }
+
 
     const handleInputChange = (e) => {        
         const { name, value } = e.target;
