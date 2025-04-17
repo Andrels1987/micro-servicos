@@ -19,13 +19,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+      - name: Instalar Maven
+        run: sudo apt-get install maven
 
       - name: Build dos serviços Spring Boot
         run: |
-          cd authentication && ./mvn clean install && cd .. 
-          cd morada-do-sol && ./mvn clean install && cd .. 
-          cd ms_servicos && ./mvn clean install && cd ..
-          cd ms-morador && ./mvn clean install && cd ..
+          cd authentication && mvn clean install && cd .. 
+          cd morada-do-sol && mvn clean install && cd .. 
+          cd ms_servicos && mvn clean install && cd ..
+          cd ms-morador && mvn clean install && cd ..
 
       - name:  Instalar dependencias do frontend
         run: |
