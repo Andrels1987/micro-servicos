@@ -1,13 +1,12 @@
 
-import React, { useContext, useState } from 'react'
 import { useLoginMutation } from '../../features/api/autenticacao/apiSliceAuth'
-import { AuthContext } from '../../features/api/context/AuthProvider'
+import React, {  useState } from 'react'
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [getLogin] = useLoginMutation()
-  const { token, setToken } = useContext(AuthContext);
+
   const [login, setLogin] = useState({ username: "", password: "", role: "ADMIN" });
    const navigate = useNavigate();
 
@@ -18,7 +17,7 @@ const Login = () => {
       sessionStorage.setItem("jwt", t.token)
       console.log("Login : ", t);
       navigate("/prestadores")
-      setToken(t.token)
+
       return;
     }
     window.alert("Login não confere");

@@ -29,12 +29,13 @@ import Registros from "./componentes/Registros/Registros";
 import PerfilRegistro from "./componentes/Registros/PerfilRegistro";
 
 
+
 const App = () => { 
- 
+/*  const dispatch = useDispatch();
   const makeLogout = async (e) => {
-    //const t = dispatch((logoutApp))
+    const t = dispatch((logoutApp))
     
-  }
+  } */
   
  
 
