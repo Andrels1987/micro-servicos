@@ -1,0 +1,17 @@
+name: CI Teste
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Print mensagem de sucesso
+        run: echo "CI/CD ativado com sucesso! 🎉"
