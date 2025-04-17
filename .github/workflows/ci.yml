@@ -16,6 +16,9 @@ jobs:
 
       - name: Configurar Java 17
         uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribuition: 'adoptopenjdk'
 
       - name: Build dos serviços Spring Boot
         run: |
