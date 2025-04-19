@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { nanoid } from "@reduxjs/toolkit";
 
 import {
@@ -92,7 +92,6 @@ const RegistrarEntrada = () => {
   const [moradorFiltrado, setMoradorFiltrado] = useState([]);
   const [moradorEscolhido, setMoradorEscolhido] = useState({});
   const dispatch = useDispatch()
-  const navigate = useNavigate();
 
 
   const procurarMorador = useCallback(() => {
@@ -121,7 +120,7 @@ const RegistrarEntrada = () => {
   }, [dispatch]);
 
   
-console.log("ERROR: ", isError.valueOf, error);
+
 
 
 
