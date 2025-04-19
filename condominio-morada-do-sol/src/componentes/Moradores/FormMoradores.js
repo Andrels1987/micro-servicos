@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Profile from "../Profile";
 import {
   useAddMoradorMutation,
@@ -6,7 +6,6 @@ import {
   useUpdateMoradorMutation,
 } from "../../features/api/moradores/apiSliceMoradores";
 import { useParams } from "react-router";
-import { AuthContext } from "../../features/api/context/AuthProvider";
 
 const moradorModelo = {
   id: "",
@@ -23,12 +22,12 @@ const moradorModelo = {
 };
 
 const FormMoradores = () => {
-  const { token } = useContext(AuthContext);
+ 
   const { id } = useParams();
   const [morador, setMorador] = useState(moradorModelo);
   const [addMorador] = useAddMoradorMutation();
   const [updateMorador] = useUpdateMoradorMutation();
-  const { data: fetchedMorador } = useGetMoradorPeloIdQuery({ token, id }, { skip: !token });
+  const { data: fetchedMorador } = useGetMoradorPeloIdQuery(id);
 
   useEffect(() => {
     if (fetchedMorador) {
@@ -56,7 +55,7 @@ const FormMoradores = () => {
         await updateMorador({ morador }).unwrap();
         alert("Morador atualizado com sucesso.");
       } else {
-        await addMorador({ morador, token }).unwrap();
+        await addMorador(morador).unwrap();
         alert("Morador criado com sucesso.");
       }
     } catch (err) {

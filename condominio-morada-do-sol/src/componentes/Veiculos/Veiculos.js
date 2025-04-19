@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -8,11 +7,9 @@ import React, {
 import { Link, useNavigate } from 'react-router-dom';
 
 import Loading from '../../Loading';
-import { AuthContext } from '../../features/api/context/AuthProvider';
 import { useGetVeiculosQuery } from '../../features/api/veiculos/veiculoApiSlice';
 
 const Veiculos = () => {
-  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
   const listRef = useRef(null);
 
@@ -25,12 +22,9 @@ const Veiculos = () => {
     isLoading,
     isError,
     error,
-    refetch,
-  } = useGetVeiculosQuery({ token }, { skip: !token });
+    } = useGetVeiculosQuery();
 
-  useEffect(() => {
-    if (token) refetch();
-  }, [token, refetch]);
+
 
   useEffect(() => {
     requestAnimationFrame(() => {

@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPrestadorPeloId, postPrestador, updatePrestador } from "../../features/api/prestadores/apiPrestadorSlice";
 import Profile from "../Profile";
 import { useParams } from "react-router";
-import { AuthContext } from "../../features/api/context/AuthProvider";
 
 // Modelo inicial do prestador
 const modeloPrestador = {
@@ -17,7 +16,7 @@ const modeloPrestador = {
 };
 
 const FormPrestador = () => {
-  const { token } = useContext(AuthContext);
+
   const { idPrestador } = useParams();
   const dispatch = useDispatch();
 
@@ -38,9 +37,9 @@ const FormPrestador = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (idPrestador) {
-      dispatch(updatePrestador({ newPrestador: prestador, token }));
+      dispatch(updatePrestador({ newPrestador: prestador }));
     } else {
-      dispatch(postPrestador({ prestador, token }));
+      dispatch(postPrestador({ prestador }));
       setPrestador(modeloPrestador);
     }
   };

@@ -4,20 +4,22 @@ import React, {  useState } from 'react'
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setToken } from '../../features/api/autenticacao/sliceToken';
 const Login = () => {
   const [getLogin] = useLoginMutation()
 
   const [login, setLogin] = useState({ username: "", password: "", role: "ADMIN" });
    const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const makeLogin = async (e) => {
     e.preventDefault();
     const { data: t } = await getLogin({ login });
+    console.log("Login : ", t);
     if (t.token !== null) {
       sessionStorage.setItem("jwt", t.token)
-      console.log("Login : ", t);
+      dispatch(setToken(t.token))
       navigate("/prestadores")
-
       return;
     }
     window.alert("Login não confere");

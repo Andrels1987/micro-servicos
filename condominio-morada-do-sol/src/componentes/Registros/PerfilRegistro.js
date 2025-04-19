@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
 import { useDispatch } from "react-redux";
@@ -8,7 +8,6 @@ import {
   useRegistrarEncerramentoDoServicoMutation,
 } from "../../features/api/servicos/apiServicosPrestados";
 import { fetchPrestadores } from "../../features/api/prestadores/apiPrestadorSlice";
-import { AuthContext } from "../../features/api/context/AuthProvider";
 
 import {
   ThemeProvider,
@@ -27,11 +26,10 @@ const darkTheme = createTheme({
 });
 
 function PerfilRegistro() {
-  const { token } = useContext(AuthContext);
   const { idRegistro } = useParams();
   const dispatch = useDispatch();
 
-  const { data: servicosPrestados } = useGetServicosPrestadosQuery({ token });
+  const { data: servicosPrestados } = useGetServicosPrestadosQuery();
   const [registrarEncerramento] = useRegistrarEncerramentoDoServicoMutation();
 
   const [registro, setRegistro] = useState(null);
@@ -73,13 +71,13 @@ function PerfilRegistro() {
 
   useEffect(() => {
     if (servicosPrestados) {
-      dispatch(fetchPrestadores(token));
+      dispatch(fetchPrestadores());
     }
-  }, [servicosPrestados, dispatch, token]);
+  }, [servicosPrestados, dispatch]);
 
   const registrarEncerramentoDoServico = async () => {
     try {
-      await registrarEncerramento({ registro, token }).unwrap();
+      await registrarEncerramento({ registro }).unwrap();
       alert("Serviço encerrado com sucesso!");
       setRegistro(prev => ({
         ...prev,

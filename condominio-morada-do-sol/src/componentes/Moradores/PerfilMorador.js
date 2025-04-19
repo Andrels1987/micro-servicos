@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import Loading from '../../Loading'
@@ -8,15 +8,14 @@ import { useEffect } from 'react'
 
 import AdicionarVeiculos from '../Outros/AdicionarVeiculos'
 import AdicionarDependente from '../Outros/AdicionarDependente'
-import { AuthContext } from '../../features/api/context/AuthProvider'
 
 
 
 
 const PerfilMorador = () => {
-  const {token} = useContext(AuthContext);
+  
   const { id } = useParams()
-  const { data: morador, isLoading, error, refetch } = useGetMoradorPeloIdQuery({ token, id })
+  const { data: morador, isLoading, error, refetch } = useGetMoradorPeloIdQuery({id })
   const navigate = useNavigate()
   
 

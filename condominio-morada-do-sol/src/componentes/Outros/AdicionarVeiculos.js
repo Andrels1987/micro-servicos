@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, Modal, TextField, TextareaAutosize } from '@mui/material'
 import { useEnviarVeiculoMutation, useLazyGetVeiculoPelaPlacaQuery } from '../../features/api/veiculos/veiculoApiSlice'
 import { useUpdateMoradorMutation } from '../../features/api/moradores/apiSliceMoradores'
-import { AuthContext } from '../../features/api/context/AuthProvider'
+
 
 const modalStyle = {
   position: 'absolute',
@@ -37,7 +37,7 @@ const veiculoModel = {
 }
 
 const AdicionarVeiculos = ({ morador, refetch }) => {
-  const { token } = useContext(AuthContext)
+
   const [open, setOpen] = useState(false)
   const [veiculo, setVeiculo] = useState(veiculoModel)
   const [disableEnviar, setDisableEnviar] = useState(true)
@@ -107,8 +107,7 @@ const AdicionarVeiculos = ({ morador, refetch }) => {
     e.preventDefault()
     const veiculoIds = morador.veiculos?.map(v => v._id) || []
     await atualizarMorador({
-      morador: { ...morador, veiculos: [...veiculoIds, veiculo._id] },
-      token
+      morador: { ...morador, veiculos: [...veiculoIds, veiculo._id] }
     })
     refetch()
     handleClose()

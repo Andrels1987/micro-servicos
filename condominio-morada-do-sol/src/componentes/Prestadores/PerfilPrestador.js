@@ -1,19 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePrestador, getPrestadorPeloId } from '../../features/api/prestadores/apiPrestadorSlice';
 import { useGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados';
 import Loading from '../../Loading';
 import { format } from 'date-fns';
-import { AuthContext } from '../../features/api/context/AuthProvider';
 
 const PerfilPrestador = () => {
-  const {token} = useContext(AuthContext)
+
   
   const { idPrestador } = useParams();
   const prestador = useSelector(state => getPrestadorPeloId(state, idPrestador));
   
-  const { data: servicosPrestados } = useGetServicosPrestadosQuery({ token });
+  const { data: servicosPrestados } = useGetServicosPrestadosQuery();
   const [entregasPorPrestador, setEntregasPorPrestador] = useState([]);
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -44,8 +43,8 @@ const PerfilPrestador = () => {
   
 
 
-  const handleDelete = (id, token) => {
-    dispatch(deletePrestador({ id, token }));
+  const handleDelete = (id) => {
+    dispatch(deletePrestador({ id }));
     navigate("/prestadores")
   };
 
@@ -66,7 +65,7 @@ const PerfilPrestador = () => {
           <h6>Tipo de serviço: <code>{prestador.servicoPrestado}</code></h6>
         </div>
         <div className="btns">
-          <button onClick={() => handleDelete(prestador.id, token)}>Deletar</button>
+          <button onClick={() => handleDelete(prestador.id)}>Deletar</button>
           <Link to={`../update-prestador/${prestador.id}`}>Atualizar</Link>
           <Link to={`../../registros/registrar-entrada/${prestador.id}`}>Registrar entrada</Link>
         </div>

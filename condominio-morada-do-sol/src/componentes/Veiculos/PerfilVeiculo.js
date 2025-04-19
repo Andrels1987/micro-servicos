@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useParams } from 'react-router';
-import { AuthContext } from '../../features/api/context/AuthProvider';
 import { useGetVeiculoPeloIdQuery } from '../../features/api/veiculos/veiculoApiSlice';
 
 const PerfilVeiculo = () => {
-  const { token } = useContext(AuthContext);
+  
   const { id } = useParams();
 
-  const { data: veiculo, isLoading, isError } = useGetVeiculoPeloIdQuery({ token, id });
+  const { data: veiculo, isLoading, isError } = useGetVeiculoPeloIdQuery({ id });
 
   if (isLoading) return <p className="text-center text-gray-300 mt-10">Carregando veículo...</p>;
   if (isError || !veiculo) return <p className="text-center text-red-400 mt-10">Erro ao carregar veículo.</p>;

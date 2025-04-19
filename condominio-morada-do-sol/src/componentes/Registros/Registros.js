@@ -1,13 +1,13 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback,  useEffect, useState } from 'react';
 import {  useLazyGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados';
 import { format } from 'date-fns';
 import { Link } from 'react-router';
-import { AuthContext } from '../../features/api/context/AuthProvider';
+
 
 import Loading from '../../Loading';
 
 const Registros = () => {
-  const { token } = useContext(AuthContext);
+
   const [ fetchServicosrestados, {data: todosOsRegistros, isLoading }] = useLazyGetServicosPrestadosQuery( );
 
   const [modoBusca, setModoBusca] = useState('data');
@@ -17,10 +17,10 @@ const Registros = () => {
 
   // Atualiza a lista de registros assim que a API retornar
   useEffect(() => {
-    if(token){
-      fetchServicosrestados({token});
-    }
-  }, [token, fetchServicosrestados]);
+
+      fetchServicosrestados();
+    
+  }, [fetchServicosrestados]);
 
   useEffect(() => {
     if(todosOsRegistros){

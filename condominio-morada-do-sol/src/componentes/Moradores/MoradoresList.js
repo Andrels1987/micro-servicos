@@ -1,14 +1,12 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Loading from '../../Loading';
 import BtnAdicionar from '../Outros/BtnAdicionar';
-import { AuthContext } from '../../features/api/context/AuthProvider';
 import { useGetMoradoresQuery } from '../../features/api/moradores/apiSliceMoradores';
 
 const MoradoresList = () => {
    
-    const { token } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const [moradorBusca, setMoradorBusca] = useState({ nome: '', apartamento: '', bloco: '' });
@@ -25,7 +23,7 @@ const MoradoresList = () => {
         isSuccess,
         isError,
         error,
-    } = useGetMoradoresQuery({ token }, {skip: !token});
+    } = useGetMoradoresQuery();
 
     // Atualiza a lista filtrada ao carregar os moradores
     useEffect(() => {
@@ -36,7 +34,7 @@ const MoradoresList = () => {
 
     //atualiza o contador
     useEffect(() => {
-        if ((isError && error) || !token) {
+        if ((isError && error)) {
             const timer = setInterval(() => {
                 setContador(prev => {
                     return prev - 1;
@@ -45,7 +43,7 @@ const MoradoresList = () => {
 
             return () => clearInterval(timer);
         }
-    }, [error, token, isError]);
+    }, [error, isError]);
 
     // Lógica de busca e redirecionamento
     const filtrarMoradores = useCallback(() => {
@@ -153,7 +151,6 @@ const MoradoresList = () => {
    
     
     const renderErro = () => {
-        if(!token) return <p style={{color: 'white'}}>Usuário deslogado. Você será redirecionado em {contador}...</p>;
         if (!error) return null;
         const mensagem = error.status === 'FETCH_ERROR'
             ? 'Serviço indisponível'
@@ -192,7 +189,7 @@ const MoradoresList = () => {
                 </div>
             )}
 
-            {(!token || isError) && renderErro()}
+            {(isError) && renderErro()}
 
             <div className="btn-adicionar">
                 <BtnAdicionar link="add-morador" />

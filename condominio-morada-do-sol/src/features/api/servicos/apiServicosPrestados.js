@@ -1,34 +1,26 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { getFetchBaseQuery } from '../autenticacao/baseQuery';
 
 const url = process.env.REACT_APP_APP_BASE_URL_SERVICO_SERVICOPRESTADO;
 
 export const apiSliceServicosPrestados = createApi({
     reducerPath: 'apiServicosPrestados',
-    baseQuery: fetchBaseQuery({ baseUrl: url }),
+    //baseQuery: fetchBaseQuery({ baseUrl: url }),
+    baseQuery: getFetchBaseQuery(url),
     tagTypes: ['servicos'],
     endpoints: (builder) => ({
         getServicosPrestados: builder.query({
-            query: ({token}) => ({
+            query: () => ({
                 url: 'servicosprestados',
                 method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
             }),
             providesTags: ['servicos']
         }),
         addServicoPrestado: builder.mutation({
             //precisa ser o mesmo nome de quando é chamado
-            //se foi passado morador, o parametro tem ser morador.
-            query: ({ entregaServico, token }) => ({
-                // query : (entrega) => ({
+            //se foi passado entregaServico, o parametro tem ser entregaServico.
+            query: ({ entregaServico }) => ({
                 url: "/servicosprestados/add",
-                headers:{
-                    Authorization: `Bearer ${token}`,
-                    //erro-resolvido: passei de 'text/plain' para 'application/json'
-                    "content-type": "application/json"
-                },
                 method: 'POST',
                 body: {
                     idPrestadorDeServico: entregaServico.idPrestadorDeServico,
@@ -40,12 +32,8 @@ export const apiSliceServicosPrestados = createApi({
             invalidatesTags: ['servicos']
         }),
         registrarEncerramentoDoServico: builder.mutation({
-            query : ({registro, token   }) =>({
+            query : ({registro }) =>({
                 url : `update/registro/encerramento/${registro.id}`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "application/json"
-                },
                 method: 'PUT',                
             }),
             invalidatesTags : ['servicos']

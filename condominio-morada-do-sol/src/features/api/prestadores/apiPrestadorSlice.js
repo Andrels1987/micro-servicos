@@ -6,8 +6,11 @@ const url = process.env.REACT_APP_APP_BASE_URL_SERVICO_PRESTADOR;
 
 export const fetchPrestadores = createAsyncThunk(
   "prestadores/fetchPrestadores",
-  async (token, { rejectWithValue }) => {
-    try {
+  async (_, { rejectWithValue }) => {
+    
+    const token = sessionStorage.getItem('jwt');
+
+    try { 
       const response = await axios.get(`${url}/prestadores`, {
         headers: {
           "Content-Type": "application/json",
@@ -23,7 +26,9 @@ export const fetchPrestadores = createAsyncThunk(
 
 export const fetchPrestadorPeloId = createAsyncThunk(
   "prestadores/fetchPrestadorPeloId",
-  async ({ id, token }, { rejectWithValue }) => {
+  async ({ id }, { rejectWithValue }) => {
+    const token = sessionStorage.getItem('jwt');
+    console.log(token);
     try {
       const response = await axios.get(`${url}/prestador/${id}`, {
         headers: {
@@ -40,7 +45,8 @@ export const fetchPrestadorPeloId = createAsyncThunk(
 
 export const deletePrestador = createAsyncThunk(
   "prestadores/deletePrestadores",
-  async ({ id, token }, { rejectWithValue }) => {
+  async ({ id }, { rejectWithValue }) => {
+    const token = sessionStorage.getItem('jwt');
     try {
       await axios.delete(`${url}/delete/prestador/${id}`, {
         headers: {
@@ -57,7 +63,8 @@ export const deletePrestador = createAsyncThunk(
 
 export const postPrestador = createAsyncThunk(
   "prestadores/postPrestadores",
-  async ({ prestador, token }, { rejectWithValue }) => {
+  async ({ prestador }, { rejectWithValue }) => {
+    const token = sessionStorage.getItem('jwt');
     try {
       const criadoEm = new Date();
       const response = await axios.post(
@@ -79,7 +86,9 @@ export const postPrestador = createAsyncThunk(
 
 export const updatePrestador = createAsyncThunk(
   "prestadores/updatePrestador",
-  async ({ newPrestador, token }, { rejectWithValue }) => {
+  async ({ newPrestador }, { rejectWithValue }) => {
+
+    const token = sessionStorage.getItem('jwt');
     try {
       const id = newPrestador.id;
       const prestadorData = {

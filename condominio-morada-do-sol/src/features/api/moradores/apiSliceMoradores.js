@@ -1,31 +1,24 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { getFetchBaseQuery } from '../autenticacao/baseQuery';
 const url = process.env.REACT_APP_APP_BASE_URL_SERVICO_MORADOR;
 
 
 export const apiSliceMoradores = createApi({
     reducerPath: 'apiMoradores',
-    baseQuery: fetchBaseQuery({ baseUrl: url }),
+    baseQuery: getFetchBaseQuery(url),
     tagTypes: ["moradores"],
     endpoints: (builder) => ({
         getMoradores: builder.query({
-            query: ({token}) => ({
+            query: () => ({
                 url: '/moradores',
                 method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "application/json"
-                },
             }),
             providesTags: ['moradores']
         }),
         addMorador: builder.mutation({
-            query: ({morador, token}) => ({
+            query: ({morador}) => ({
                 url: "/morador/add",
                 method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
                 body: {
                     nome: morador.nome,
                     sobrenome: morador.sobrenome,
@@ -35,26 +28,13 @@ export const apiSliceMoradores = createApi({
                     telefone: morador.telefone,
                     documento: morador.documento
                 }
-
-                    /* "nome": "Ferdnand",
-                    "sobrenome": "Rodrigues",
-                    "apartamento": "2022",
-                    "bloco": "C",    
-                    "listaVeiculos": [],
-                    "foto": "",
-                    "telefone": "212221212222",
-                    "listaDependentes": [] */
             }),
             invalidatesTags: ['moradores']
         }),
         updateMorador: builder.mutation({
-            query: ({morador,token}) => ({
+            query: (morador) => ({
                 url: `/update/morador/${morador.id}`,
                 method: 'PUT',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "application/json"
-                },
                 body: {
                     id: morador.id,
                     nome: morador.nome,
@@ -68,36 +48,26 @@ export const apiSliceMoradores = createApi({
                     dependentes: morador.dependentes
                 }
             }),
-            invalidatesTags: ['moradores']           
+            invalidatesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id }]
+         
         }),
         getMoradorPeloId: builder.query({
-            query: ({token, id}) => ({
+            query: (id) => ({
                 url: `/moradores/perfil/${id}`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
-            invalidatesTags: ['moradores']
+            providesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id }],
         }),
         getMoradorPeloDocumento: builder.query({
-            query: ({token, documento}) => ({
+            query: ({documento}) => ({
                 url: `/morador/documento/${documento}`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
-            invalidatesTags: ['moradores']
+            providesTags: (result, error, {documento}) => [{ type: 'moradores', documento: documento }],
         }),
         associarDependenteAoMorador: builder.mutation({
             query: ({idMorador, dependente}) => ({
                 url: `/adicionardependente/morador/${idMorador}`,
-                headers: {
-                    "content-type": "application/json"
-                },
                 body:{
                     parentesco: dependente.parentesco,
                     _id: dependente.id
@@ -109,14 +79,9 @@ export const apiSliceMoradores = createApi({
         addEntrega: builder.mutation({
             //precisa ser o mesmo nome de quando é chamado
             //se foi passado morador, o parametro tem ser morador.
-            query: ({ entregaServico, token }) => ({
+            query: ({ entregaServico }) => ({
                 // query : (entrega) => ({
                 url: "/add/servico",
-                headers:{
-                    Authorization: `Bearer ${token}`,
-                    //erro-resolvido: passei de 'text/plain' para 'application/json'
-                    "content-type": "application/json"
-                },
                 method: 'POST',
                 body: {
                     nomeEntregador: entregaServico.nomeEntregador,
@@ -133,55 +98,36 @@ export const apiSliceMoradores = createApi({
             invalidatesTags: ['moradores']
         }),
         getEntregas: builder.query({
-            query: ({token}) => ({
+            query: () => ({
                 url:`/servicosprestados`,
                 method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                }}),
+                }),
             providesTags: ['moradores']
         }),
         getVeiculos: builder.query({
-            query: ({token}) => ({
+            query: () => ({
                 url: `/veiculos`,
-                headers : {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
             providesTags: ['moradores']
         }),
         getVeiculoPeloId: builder.query({
-            query: ({token, id}) => ({
+            query: ({ id}) => ({
                 url: `/veiculo/${id}`,
-                headers : {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
             providesTags: ['moradores']
         }),
         getProprietarioPeloIdVeiculo: builder.query({
-            query: ({token, id}) => ({
+            query: ({ id}) => ({
                 url: `/moradores/proprietario/${id}`,
-                headers : {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
             providesTags: ['moradores']
         }),
         getProprietarioPelaPlacaVeiculo: builder.query({
-            query: ({token, placa}) => ({
+            query: ({placa}) => ({
                 url: `/morador/veiculo/placa/${placa}`,
-                headers : {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
             providesTags: ['moradores']
@@ -191,7 +137,7 @@ export const apiSliceMoradores = createApi({
                 url: `/auth/logout`,
                 method: 'POST',
             }),
-            providesTags: ['moradores']
+            invalidatesTags: ['moradores']
         }),
     })
 })

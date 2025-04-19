@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { AuthContext } from "../../features/api/context/AuthProvider";
 import { fetchPrestadores } from "../../features/api/prestadores/apiPrestadorSlice";
 import BtnAdicionar from "../Outros/BtnAdicionar";
 
@@ -12,13 +11,15 @@ const PrestadorList = () => {
   const [mensagemErro, setMensagemErro] = useState("");
 
   const dispatch = useDispatch();
-  const { token } = useContext(AuthContext);
+
   const prestadores = useSelector((state) => state.prestador.prestadores);
 
   // Fetch ao carregar
   useEffect(() => {
-    if (token) dispatch(fetchPrestadores(token));
-  }, [dispatch, token]);
+          
+      dispatch(fetchPrestadores());
+    
+  }, [dispatch]);
 
   // Função de filtro
   const aplicarFiltro = useCallback(() => {

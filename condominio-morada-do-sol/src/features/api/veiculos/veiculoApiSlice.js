@@ -1,29 +1,24 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { getFetchBaseQuery } from '../autenticacao/baseQuery';
 const url = process.env.REACT_APP_APP_BASE_URL_SERVICO_VEICULO
 
 
 
 export const veiculoApiSlice = createApi({
     reducerPath: 'apiVeiculos',
-    baseQuery: fetchBaseQuery({ baseUrl: url }),
+    baseQuery: getFetchBaseQuery(url),
     tagTypes: ["veiculos"],
     endpoints: (builder) => ({
         getVeiculos: builder.query({
             query: () => ({
                 url: "/api/todosveiculos",
                 method: "GET",
-                headers: {
-                    "content-type": "text/plain",
-                },
             }),
             providesTags: ["veiculos"]
         }),
         getVeiculoPeloId: builder.query({
             query: ({ token, id }) => ({
                 url: `/api/veiculo/${id}`,
-                headers: {
-                    "content-type": "text/plain"
-                },
                 method: 'GET',
             }),
             providesTags: ['veiculos']
@@ -31,20 +26,13 @@ export const veiculoApiSlice = createApi({
         getVeiculoPelaPlaca: builder.query({
             query: ({placa }) => ({
                 url: `/api/veiculo?placa=${placa}`,
-                headers: {
-                    "content-type": "application/json"
-                },
                 method: 'GET',
             }),
             providesTags: ['veiculos']
         }),
         getProprietarioPeloIdVeiculo: builder.query({
-            query: ({ token, id }) => ({
+            query: ({ id }) => ({
                 url: `/api/moradores/proprietario/${id}`,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "content-type": "application/json"
-                },
                 method: 'GET',
             }),
             providesTags: ['veiculos']

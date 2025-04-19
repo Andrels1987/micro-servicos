@@ -1,11 +1,12 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { getFetchBaseQuery } from './baseQuery';
 
 const url = process.env.REACT_APP_BASE_URL_AUTENTICACAO;
 
 
 export const apiSliceAutenticacao = createApi({
     reducerPath: "apiAutenticacao",
-    baseQuery: fetchBaseQuery({baseUrl: url}),
+    baseQuery: getFetchBaseQuery(url),
     tagTypes: ['autenticacao'],
     endpoints: (builder) => ({
         login: builder.mutation({

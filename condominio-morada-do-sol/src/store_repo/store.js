@@ -1,5 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit'
 import prestadorReducer from '../features/api/prestadores/apiPrestadorSlice'
+import sliceTokenReducer from '../features/api/autenticacao/sliceToken'
 import { apiSliceMoradores } from '../features/api/moradores/apiSliceMoradores'
 import  contadorReducer  from '../features/api/user/apiUserSlice'
 import { veiculoApiSlice } from '../features/api/veiculos/veiculoApiSlice'
@@ -12,6 +13,7 @@ export const store = configureStore({
     reducer :{
         user : contadorReducer,
         prestador : prestadorReducer,
+        auth: sliceTokenReducer,
         [apiSliceMoradores.reducerPath] : apiSliceMoradores.reducer,
         [veiculoApiSlice.reducerPath] : veiculoApiSlice.reducer,
         [apiSliceServicosPrestados.reducerPath] : apiSliceServicosPrestados.reducer,
