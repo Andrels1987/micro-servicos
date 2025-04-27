@@ -15,10 +15,11 @@ import AdicionarDependente from '../Outros/AdicionarDependente'
 const PerfilMorador = () => {
   
   const { id } = useParams()
-  const { data: morador, isLoading, error, refetch } = useGetMoradorPeloIdQuery({id })
+  const { data: morador, isLoading, error, refetch } = useGetMoradorPeloIdQuery(id)
   const navigate = useNavigate()
   
 
+console.log(morador);
 
 
   useEffect(() => {
@@ -26,6 +27,8 @@ const PerfilMorador = () => {
       navigate("/")
     }
   }, [navigate, error])
+
+  
  
 
 

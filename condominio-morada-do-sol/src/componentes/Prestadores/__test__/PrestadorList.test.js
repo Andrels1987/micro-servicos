@@ -7,9 +7,8 @@ import user from "@testing-library/user-event"
 import PerfilPrestador from "../PerfilPrestador";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { apiSliceMoradores } from "../../../features/api/moradores/apiSliceMoradores";
 import { apiSliceServicosPrestados } from "../../../features/api/servicos/apiServicosPrestados";
-import { veiculoApiSlice } from "../../../features/api/veiculos/veiculoApiSlice";
+
 import  { apiPrestadorSlice } from '../../../features/api/prestadores/apiPrestadorSlice'
 import Formprestador from "../FormPrestador";
 

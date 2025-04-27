@@ -43,8 +43,8 @@ const AdicionarVeiculos = ({ morador, refetch }) => {
   const [disableEnviar, setDisableEnviar] = useState(true)
   const [disableAssociar, setDisableAssociar] = useState(true)
 
-  const [buscarVeiculo] = useLazyGetVeiculoPelaPlacaQuery()
   const [enviarVeiculo] = useEnviarVeiculoMutation()
+  const [buscarVeiculo] = useLazyGetVeiculoPelaPlacaQuery()
   const [atualizarMorador] = useUpdateMoradorMutation()
 
   const handleOpen = () => setOpen(true)
@@ -81,6 +81,7 @@ const AdicionarVeiculos = ({ morador, refetch }) => {
     const res = await buscarVeiculo({ placa: veiculo.placa })
 
     if (res?.data?.err) {
+      console.log("ENTROU AQUI", res.data.err)
       setDisableEnviar(false)
       setDisableAssociar(true)
     } else {
@@ -101,6 +102,7 @@ const AdicionarVeiculos = ({ morador, refetch }) => {
     e.preventDefault()
     await enviarVeiculo({ veiculo })
     setDisableEnviar(true)
+    setDisableAssociar(false);
   }
 
   const handleAssociarVeiculo = async (e) => {

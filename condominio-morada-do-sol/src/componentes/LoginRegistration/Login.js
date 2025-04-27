@@ -1,17 +1,19 @@
-
-import { useLoginMutation } from '../../features/api/autenticacao/apiSliceAuth'
 import React, {  useState } from 'react'
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../../features/api/autenticacao/sliceToken';
+import { useLoginMutation } from '../../features/api/autenticacao/apiSliceAuth'
 const Login = () => {
-  const [getLogin] = useLoginMutation()
+
+  const [ getLogin ] = useLoginMutation();
 
   const [login, setLogin] = useState({ username: "", password: "", role: "ADMIN" });
    const navigate = useNavigate();
   const dispatch = useDispatch();
+
+
   const makeLogin = async (e) => {
     e.preventDefault();
     const { data: t } = await getLogin({ login });
@@ -42,7 +44,7 @@ const Login = () => {
             onChange={(e) => setLogin({ ...login, password: e.target.value })}></Form.Control>
         </Form.Group>
 
-        <Button onClick={(e) => makeLogin(e)}>Login</Button>
+        <Button data-testid="button-login" onClick={(e) => makeLogin(e)}>Login</Button>
 
       </Form>
     </div>

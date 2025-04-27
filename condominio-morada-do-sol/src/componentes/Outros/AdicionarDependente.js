@@ -50,11 +50,18 @@ const AdicionarDependente = ({morador, refetch}) => {
             dependenteModel.foto = res.data.foto;
             dependenteModel.nome = res.data.nome;
             dependenteModel.sobrenome = res.data.sobrenome;
-            console.log("RESULT : ", dependenteModel)})
-            setDependente(old => dependenteModel);
+            console.log("RESULT : ", res.data)
+            setDependente(old =>( 
+                {...dependente, 
+                    nome: dependenteModel.nome, 
+                    sobrenome: dependenteModel.sobrenome,   
+                    id: dependenteModel.id,
+                    foto: dependenteModel.foto
+                }));
             setDisabledAtualizar(!disableAtualizar)
-            
+        }) 
     }
+
 
     const associarDependenteAoMorador = (e) => {
         e.preventDefault();
@@ -76,7 +83,7 @@ const AdicionarDependente = ({morador, refetch}) => {
             >
                 <Box sx={style}>
                     <section>
-                        <input type="text" onChange={(e) => setDependente({ ...dependente, documento: e.target.value })} name='documento' placeholder='documento' id='documento' />
+                        <input type="text" onChange={(e) => setDependente({ ...dependente, documento: e.target.value })} name='documento' placeholder='documento' id='documento' value={ dependente.documento || ""}/>
                         <button onClick={(e) => buscarDependentePeloDocumento(e)}>buscar</button>
                     </section>
                     <div>

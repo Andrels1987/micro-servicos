@@ -56,18 +56,11 @@ describe("PerfilMorador", () => {
         .useAddMoradorMutation.mockReturnValue([data]);
     });
 
-    /* const preloadedState = {
-        reducer: {
-            queries: {},
-            mutations: {},
-            provided: {},
-            subscriptions: {},
-        },
-    }; */
+    
 
     const store = configureStore({
         reducer: {
-            [apiSliceMoradores.reducerPath]: () => apiSliceMoradores.reducer, // 🔥 Agora retorna um estado válido
+            [apiSliceMoradores.reducerPath]: () => apiSliceMoradores.reducer, 
         },
         
     });
