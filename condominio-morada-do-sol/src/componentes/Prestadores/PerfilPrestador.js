@@ -1,5 +1,5 @@
 import React, {  useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePrestador, getPrestadorPeloId } from '../../features/api/prestadores/apiPrestadorSlice';
 import { useGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados';
@@ -49,6 +49,8 @@ const PerfilPrestador = () => {
   };
 
   if (!prestador) return <Loading />;
+  console.log("PRESTADOR: ",prestador);
+  
 
   return (
     <div data-testid="prestador-profile" className="perfil-prestador">

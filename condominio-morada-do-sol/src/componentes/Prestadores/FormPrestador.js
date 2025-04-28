@@ -29,6 +29,9 @@ const FormPrestador = () => {
     }
   }, [idPrestador, prestadorExistente]);
 
+  console.log(prestadorExistente);
+  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setPrestador((prev) => ({ ...prev, [name]: value }));
@@ -52,8 +55,9 @@ const FormPrestador = () => {
   const isFormValid = 
     prestador.nome &&
     prestador.empresa &&
+    prestador.sobrenome &&
     prestador.numeroDocumento &&
-    prestador.foto &&
+    //prestador.foto &&
     prestador.servicoPrestado;
 
   return (
@@ -71,11 +75,11 @@ const FormPrestador = () => {
           </button>
         </div>
 
-        <InputField label="Nome" name="nome" value={prestador.nome} onChange={handleInputChange} />
-        <InputField label="Sobrenome" name="sobrenome" value={prestador.sobrenome} onChange={handleInputChange} />
-        <InputField label="Empresa" name="empresa" value={prestador.empresa} onChange={handleInputChange} />
-        <InputField label="RG/CPF" name="numeroDocumento" value={prestador.numeroDocumento} onChange={handleInputChange} />
-        <InputField label="Serviço" name="servicoPrestado" value={prestador.servicoPrestado} onChange={handleInputChange} />
+        <InputField placeholder={'nome'} label="Nome" name="nome" value={prestador.nome} onChange={handleInputChange} />
+        <InputField placeholder={'sobrenome'} label="Sobrenome" name="sobrenome" value={prestador.sobrenome} onChange={handleInputChange} />
+        <InputField placeholder={'empresa'} label="Empresa" name="empresa" value={prestador.empresa} onChange={handleInputChange} />
+        <InputField placeholder={'documento'} label="RG/CPF" name="numeroDocumento" value={prestador.numeroDocumento} onChange={handleInputChange} />
+        <InputField placeholder={'servico'} label="Serviço" name="servicoPrestado" value={prestador.servicoPrestado} onChange={handleInputChange} />
 
         <button type="submit" className="salvar-prestador" disabled={!isFormValid}>
           Salvar Prestador
@@ -86,10 +90,10 @@ const FormPrestador = () => {
 };
 
 //reduz repetição de codigo e melhora a legibilidade do JSX
-const InputField = ({ label, name, value, onChange }) => (
+const InputField = ({ label, name, value, onChange, placeholder }) => (
   <div>
     <label htmlFor={name}>{label}</label>
-    <input type="text" id={name} name={name} value={value || ""} onChange={onChange} />
+    <input placeholder={placeholder} type="text" id={name} name={name} value={value || ""} onChange={onChange} />
   </div>
 );
 
