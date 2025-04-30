@@ -4,15 +4,23 @@ import { screen, render, queries } from "@testing-library/react"
 import PerfilPrestador from "../PerfilPrestador";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { apiPrestadorSlice } from "../../../features/api/prestadores/apiPrestadorSlice";
+import reducer, { apiPrestadorSlice } from "../../../features/api/prestadores/apiPrestadorSlice";
 import { apiSliceServicosPrestados, useGetServicosPrestadosQuery } from "../../../features/api/servicos/apiServicosPrestados";
-import { MemoryRouter, useNavigate } from "react-router";
+import { MemoryRouter, Route, Routes, useNavigate, useParams } from "react-router";
 import user from "@testing-library/user-event"
-
+import * as servicoApi from '../../../features/api/servicos/apiServicosPrestados'
+import * as prestadorApi from '../../../features/api/prestadores/apiPrestadorSlice'
+import FormPrestador from "../FormPrestador";
+import RegistrarEntrada from "../../Registros/RegistrarEntrada"
+import { apiSliceMoradores, useGetMoradoresQuery } from "../../../features/api/moradores/apiSliceMoradores";
+import PrestadorPage from '../PrestadorPage';
+import PrestadorList from "../PrestadorList";
+import Registros from '../../Registros/Registros'
 
 jest.mock('react-router', () => ({
     ...jest.requireActual('react-router'),
-    useNavigate: jest.fn()
+    useNavigate: jest.fn(),
+    useParams: jest.fn()
 }))
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
@@ -24,6 +32,7 @@ jest.mock('../../../features/api/prestadores/apiPrestadorSlice', () => ({
     getPrestadorPeloId: jest.fn(() => ({})),
     updatePrestador: jest.fn(() => ({ data: [] })),
     deletePrestador: jest.fn(() => ({})),
+    fetchPrestadores: jest.fn(() => ({ type: 'prestadores/fetchPrestadores' })),
     apiPrestadorSlice: {
         reducerPath: 'apiPrestadorSlice',
         reducer: {
@@ -35,16 +44,19 @@ jest.mock('../../../features/api/prestadores/apiPrestadorSlice', () => ({
     }
 }))
 jest.mock('../../../features/api/servicos/apiServicosPrestados', () => ({
-    useGetServicosPrestadosQuery: jest.fn(() => ({
-        data: [
-            {
-                idPrestadorDeServico: '1',
-                idMorador: '2',
-                tipoDeServico: "entregaServico.tipoDeServico",
-                observacaoSobreServico: "entregaServico.observacaoSobreServico"
-            }
-        ]
-    })),
+    useAddServicoPrestadoMutation: jest.fn(() => ([])),
+    useGetServicosPrestadosQuery: jest.fn(() => (
+        {
+            data: [
+                {
+                    idPrestadorDeServico: '1',
+                    idMorador: '2',
+                    tipoDeServico: "entregaServico.tipoDeServico",
+                    observacaoSobreServico: "entregaServico.observacaoSobreServico"
+                }
+            ], isLoading: false, IsSuccess: undefined, isError: false
+        }
+    )),
     apiSliceServicosPrestados: {
         reducerPath: 'apiSliceServicosPrestados',
         reducer: {
@@ -56,37 +68,66 @@ jest.mock('../../../features/api/servicos/apiServicosPrestados', () => ({
     }
 }))
 
+jest.mock("../../../features/api/moradores/apiSliceMoradores", () => ({
+    useGetMoradoresQuery: jest.fn(() => ({ data: [] })),
+    apiSliceMoradores: {
+        reducerPath: 'apiSliceMoradores',
+        reducer: {
+            queries: {},
+            mutations: {},
+            subscriptions: {},
+            providers: {}
+        }
+    }
+}))
+const store = configureStore({
+    reducer: {
+        [apiPrestadorSlice.reducerPath]: apiPrestadorSlice.reducer,
+        [apiSliceServicosPrestados.reducerPath]: apiSliceServicosPrestados.reducer
+    }
+})
 
+const renderComponent = () => (
+    render(
+        <Provider store={store}>
+            <MemoryRouter initialEntries={["/"]}>
+                <Routes> 
+                    
+                        <Route path="/" element={<PerfilPrestador />} />
+                        <Route path={"update-prestador/:idPrestador"} element={<FormPrestador />} />
+                        <Route path="registros">
+                            <Route path={"registrar-entrada/:idPrestador"} element={<RegistrarEntrada />} /> 
+                        </Route>                    
+                </Routes>
+            </MemoryRouter>
+        </Provider>
+    )
+)
 
 describe('Perfil prestador', () => {
     user.setup()
     const mockDispatch = jest.fn()
     const mockUseNavigate = jest.fn()
-    
-    const store = configureStore({
-        reducer: {
-            [apiPrestadorSlice.reducerPath]: () => apiPrestadorSlice.reducer,
-            [apiSliceServicosPrestados.reducerPath]: () => apiSliceServicosPrestados.reducer
-        }
-    })
+
+
 
     const modeloPrestador = {
-        nome: "Bonifacio", 
-        sobrenome: "Rezende", 
-        empresa: "BR servicos", 
-        numeroDocumento: "123.456.789-89", 
-        foto: "", 
+        id: "1",
+        nome: "Bonifacio",
+        sobrenome: "Rezende",
+        empresa: "BR servicos",
+        numeroDocumento: "123.456.789-89",
+        foto: "",
         idVeiculo: "",
         servicoPrestado: "drenagem de dutos"
-      };
+    };
     beforeEach(() => {
         jest.clearAllMocks()
+        useParams.mockReturnValue({ idPrestador: '1' })
         useSelector.mockImplementation((selectorFn) => selectorFn({}))
         useDispatch.mockReturnValue(mockDispatch)
         useNavigate.mockReturnValue(mockUseNavigate)
 
-        const servicoApi = require('../../../features/api/servicos/apiServicosPrestados')
-        const prestadorApi = require('../../../features/api/prestadores/apiPrestadorSlice')
         servicoApi.useGetServicosPrestadosQuery.mockReturnValue([{
             idPrestadorDeServico: '1',
             idMorador: '2',
@@ -95,18 +136,11 @@ describe('Perfil prestador', () => {
         }])
 
         prestadorApi.getPrestadorPeloId.mockReturnValue(modeloPrestador)
-        prestadorApi.deletePrestador.mockReturnValue({})
 
     })
 
     test('should render correctly', () => {
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilPrestador />
-                </MemoryRouter>
-            </Provider>
-        )
+        renderComponent();
 
         const headingEmpresa = screen.getByRole('heading', { name: /empresa/i })
         const headingDocumento = screen.getByRole('heading', { name: /documento/i })
@@ -121,37 +155,23 @@ describe('Perfil prestador', () => {
         expect(btnDeletar).toBeInTheDocument();
         expect(linkAtualizar).toBeInTheDocument();
         expect(linkRegistrarEntrada).toBeInTheDocument();
-        
+
     })
 
-    test('should show carregando if there is not a prestador', () => { 
-        const prestadorApi = require('../../../features/api/prestadores/apiPrestadorSlice')
+    test('should show carregando if there is not a prestador', () => {
         prestadorApi.getPrestadorPeloId.mockReturnValue(null)
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilPrestador />
-                </MemoryRouter>
-            </Provider>
-        )
+        renderComponent();
 
         const loading = screen.getByTestId('loading')
         expect(loading).toBeInTheDocument();
     })
 
-    test('should delete prestador', async() => { 
-        const prestadorApi = require('../../../features/api/prestadores/apiPrestadorSlice')
+    test('should delete prestador', async () => {
         prestadorApi.deletePrestador.mockReturnValue({})
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilPrestador />
-                </MemoryRouter>
-            </Provider>
-        )
+        renderComponent()
 
-        const btnDeletar = screen.getByRole('button', {name: /deletar/i})
-        const headingNome = screen.getByRole('heading', {name: /bonifacio rezende/i})
+        const btnDeletar = screen.getByRole('button', { name: /deletar/i })
+        const headingNome = screen.getByRole('heading', { name: /bonifacio rezende/i })
 
         expect(btnDeletar).toBeInTheDocument();
         expect(headingNome).toBeInTheDocument();
@@ -160,6 +180,42 @@ describe('Perfil prestador', () => {
 
         expect(mockDispatch).toHaveBeenCalled();
         expect(prestadorApi.deletePrestador).toHaveBeenCalled();
+        expect(mockUseNavigate).toHaveBeenCalledWith('/prestadores')
+    })
 
-     })
+    test('should go to update prestador', async () => {
+        renderComponent();
+
+        const linkUpdate = screen.getByText(/atualizar/i)
+        expect(linkUpdate).toBeInTheDocument()
+
+        await user.click(linkUpdate);
+
+        const inputNome = screen.getByPlaceholderText('nome')
+        const inputSobrenome = screen.getByPlaceholderText(/sobrenome/i)
+        expect(inputNome).toBeInTheDocument();
+        expect(inputSobrenome).toBeInTheDocument();
+    })
+    test('should go to registrar entrada', async () => {
+        renderComponent();
+
+        const linkRegistrarEntrada = screen.getByText(/registrar entrada/i)
+        expect(linkRegistrarEntrada).toBeInTheDocument()
+
+        await user.click(linkRegistrarEntrada);
+
+        const prestadorNome = screen.getByRole('heading',{level: 6, name: /bonifacio/i})
+        const headingBuscarMorador = screen.getByRole('heading', {name: /Buscar Morador/i })
+        const menuItemNome = screen.getByText("Nome");
+        const headingDadosPS = screen.getByRole('heading', {name: /Dados da Prestação de Serviço/i})
+        const menuItemAptBloco = screen.getByText(/Apartamento:.*/i)
+        const btnConfirmar = screen.getByRole('button', {name: /confirmar entrada/i})
+
+        expect(btnConfirmar).toBeInTheDocument();
+        expect(headingBuscarMorador).toBeInTheDocument();
+        expect(menuItemAptBloco).toBeInTheDocument();
+        expect(menuItemNome).toBeInTheDocument();
+        expect(prestadorNome).toBeInTheDocument();
+        expect(headingDadosPS).toBeInTheDocument();
+    })
 })

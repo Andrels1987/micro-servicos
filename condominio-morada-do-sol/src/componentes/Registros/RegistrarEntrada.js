@@ -114,11 +114,13 @@ const RegistrarEntrada = () => {
   }, [morador, procurarMorador]);
 
   useEffect(() => {
-
-    dispatch(fetchPrestadores());
-
+    if(!prestador){
+      dispatch(fetchPrestadores());
+    }
+    
   }, [dispatch]);
-
+  
+  console.log(prestador); 
   
 
 
@@ -181,7 +183,7 @@ const RegistrarEntrada = () => {
                 }
               }} value={modoBusca} label="Modo de busca" onChange={(e) => setModoBusca(e.target.value)}>
               <MenuItem value="nome">Nome</MenuItem>
-              <MenuItem value="documento">Apartamento/Bloco</MenuItem>
+              <MenuItem value="apartamento/bloco">Apartamento-Bloco</MenuItem>
             </Select>
           </FormControl>
 

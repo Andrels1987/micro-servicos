@@ -3,6 +3,7 @@ import { getFetchBaseQuery } from './baseQuery';
 
 const url = process.env.REACT_APP_BASE_URL_AUTENTICACAO;
 
+console.log(url);
 
 export const apiSliceAutenticacao = createApi({
     reducerPath: "apiAutenticacao",
