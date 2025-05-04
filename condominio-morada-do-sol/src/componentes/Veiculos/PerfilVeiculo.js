@@ -7,7 +7,8 @@ const PerfilVeiculo = () => {
   const { id } = useParams();
 
   const { data: veiculo, isLoading, isError } = useGetVeiculoPeloIdQuery({ id });
-
+  console.log(veiculo);
+  
   if (isLoading) return <p className="text-center text-gray-300 mt-10">Carregando veículo...</p>;
   if (isError || !veiculo) return <p className="text-center text-red-400 mt-10">Erro ao carregar veículo.</p>;
 
@@ -34,9 +35,9 @@ const PerfilVeiculo = () => {
             {!motorista ? (
               <p className="text-center text-gray-400">Carregando proprietário...</p>
             ) : (
-              <p className="text-center">
-                <code>{motorista.nome}</code><br />
-                <code>Apto {motorista.apartamento} - Bloco {motorista.bloco}</code>
+              <p data-testid="proprietario" className="text-center">
+                <code>{`${motorista.nome} ${motorista.sobrenome} | `}</code><br />
+                <code>Apto: {motorista.apartamento} - Bloco {motorista.bloco}</code>
               </p>
             )}
           </div>

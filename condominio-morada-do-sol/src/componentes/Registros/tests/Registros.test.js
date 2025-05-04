@@ -25,12 +25,12 @@ const mockServicos = [{
     dataEncerramentoDoServico: "2025-04-16T14:45:02.364",
     tipoDeServico: "tipo de servico",
 }]
+const mockDispatch = jest.fn();
 
 jest.mock("react-redux", () => ({
     ...jest.requireActual('react-redux'),
     useDispatch: jest.fn()
 }))
-const mockDispatch = jest.fn();
 jest.mock("../../../features/api/servicos/apiServicosPrestados", () => ({
     useRegistrarEncerramentoDoServicoMutation: jest.fn(() => ([jest.fn()])),
     useGetServicosPrestadosQuery: jest.fn(() => (

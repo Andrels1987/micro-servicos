@@ -25,6 +25,7 @@ import { fetchPrestadores, getPrestadorPeloId } from "../../features/api/prestad
 // theme.js ou theme.ts
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider, CssBaseline } from '@mui/material';
+import { pointer } from "@testing-library/user-event/dist/cjs/pointer/index.js";
 
 const darkTheme = createTheme({
   palette: {
@@ -89,6 +90,7 @@ const RegistrarEntrada = () => {
   const [modoBusca, setModoBusca] = useState("nome");
   const [morador, setMorador] = useState({ nome: "", apartamento: "", bloco: "" });
   const [tipoDeServico, setTipoDeServico] = useState("");
+  const [observacaoSobreServico, setObservacaoSobreServico] = useState("");
   const [moradorFiltrado, setMoradorFiltrado] = useState([]);
   const [moradorEscolhido, setMoradorEscolhido] = useState({});
   const dispatch = useDispatch()
@@ -120,19 +122,21 @@ const RegistrarEntrada = () => {
     
   }, [dispatch]);
   
-  console.log(prestador); 
+
   
 
 
+  console.log(tipoDeServico, " ", observacaoSobreServico);
 
 
 
   const finalizarRegistroDePrestacaoDeServico = () => {
+    
     const entregaServico = {
       idPrestadorDeServico: prestador.id,
       idMorador: moradorEscolhido.id,
-      tipoDeServico: tipoDeServico,
-      observacaoSobreServico: moradorEscolhido.observacao,
+      tipoDeServico,
+      observacaoSobreServico,
     };
 
     addServico({ entregaServico });
@@ -159,15 +163,19 @@ const RegistrarEntrada = () => {
             <small style={{marginLeft: '1em',color: "#D6423D", fontSize: 'small'}}>{isError && error.status === "FETCH_ERROR" ? "Erro ao carregar moradores": ""}</small></Typography>
           
           <FormControl fullWidth sx={{ mb: 1 }}>
-            <InputLabel >Modo de busca</InputLabel>
+            <InputLabel data-testid="modo-de-busca">Modo de busca</InputLabel>
             <Select
               sx={{
+                pointerEvents: "stroke",
                 height: 30, // controla a altura do select
                 fontSize: '0.8em',
                 '.MuiSelect-select': {
                   py: 0.1, // padding vertical interno
                 }
               }}
+              inputProps={
+                {'data-testid': "select"}
+              }
               size="small"
               MenuProps={{
                 PaperProps: {
@@ -189,7 +197,10 @@ const RegistrarEntrada = () => {
 
           {modoBusca === "nome" ? (
             <TextField
-              fullWidth
+              sx={{
+                'data-testid': "input-nome-morador"
+              }}
+              fullWidth              
               label="Nome do morador"
               onChange={(e) => setMorador({ ...morador, nome: e.target.value })}
             />
@@ -208,6 +219,7 @@ const RegistrarEntrada = () => {
                   fullWidth
                   label="Bloco"
                   value={morador.bloco || ""}
+                  
                   onChange={(e) => setMorador({ ...morador, bloco: e.target.value })}
                 />
               </Grid>
@@ -217,7 +229,7 @@ const RegistrarEntrada = () => {
           {moradorFiltrado.length > 0 && (
             <Box mt={3}>
               {moradorFiltrado.map((mf) => (
-                <Paper
+                <Paper data-testid="paper"
                   key={nanoid()}
                   sx={{
                     color: 'white',
@@ -238,22 +250,24 @@ const RegistrarEntrada = () => {
         <Paper elevation={3} sx={{ p: 2 }}>
           <Typography sx={{ fontSize: 15 }} variant="h6" gutterBottom>Dados da Prestação de Serviço</Typography>
 
-          <Typography sx={{ fontSize: 12 }} variant="subtitle1">
+          <Typography data-testid="nome-morador" sx={{ fontSize: 12 }} variant="subtitle1">
             Nome: <strong>{moradorEscolhido.nome} {moradorEscolhido.sobrenome}</strong>
           </Typography>
-          <Typography sx={{ fontSize: 12 }} variant="subtitle1">
+          <Typography data-testid="bloco-apt" sx={{ fontSize: 12 }} variant="subtitle1">
             Apartamento: <strong>{moradorEscolhido.apartamento}</strong> | Bloco: <strong>{moradorEscolhido.bloco}</strong>
           </Typography>
 
           <TextField
+            data-testid="servico"
             fullWidth
             label="Tipo de Serviço"
             sx={{ my: 1, mt: 1 }}
-            value={tipoDeServico}
+            value={tipoDeServico || ""}
             onChange={(e) => setTipoDeServico(e.target.value)}
           />
 
           <TextField
+            data-testid="observacao"
             sx={{
               mt: 1
             }}
@@ -261,8 +275,8 @@ const RegistrarEntrada = () => {
             multiline
             rows={1}
             label="Observações"
-            value={moradorEscolhido.observacao || ""}
-            onChange={(e) => setMoradorEscolhido({ ...moradorEscolhido, observacao: e.target.value })}
+            value={observacaoSobreServico || ""}
+            onChange={(e) => setObservacaoSobreServico(e.target.value )}
           />
 
           <Button
