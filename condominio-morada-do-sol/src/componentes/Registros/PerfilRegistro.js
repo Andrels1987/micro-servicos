@@ -89,6 +89,7 @@ function PerfilRegistro() {
     }
   };
 
+  
   if (!registro) return <Typography color="white">Carregando registro...</Typography>;
 
   return (

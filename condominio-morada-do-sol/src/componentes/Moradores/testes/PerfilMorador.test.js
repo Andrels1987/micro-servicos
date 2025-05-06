@@ -3,7 +3,7 @@ import PerfilMorador from "../PerfilMorador";
 import { render, screen, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import '@testing-library/jest-dom';
 import user from "@testing-library/user-event"
 import FormMoradores from "../FormMoradores";
@@ -25,6 +25,25 @@ jest.mock("../../../features/api/moradores/apiSliceMoradores", () => ({
         }, // Agora retorna um estado válido    
     },
 }));
+const store = configureStore({
+    reducer: {
+        [apiSliceMoradores.reducerPath]: () => apiSliceMoradores.reducer,
+    },
+
+});
+
+const renderComponent = () => {
+    return render(
+        <Provider store={store}>
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<PerfilMorador />} />
+                        <Route path="update-morador/:id" element={<FormMoradores />} />
+                    </Routes>
+                </MemoryRouter>
+            </Provider>
+    )
+}
 
 describe("PerfilMorador", () => {
 
@@ -44,6 +63,7 @@ describe("PerfilMorador", () => {
     }
     beforeEach(() => {
         jest.clearAllMocks();
+        user.setup();
         require("../../../features/api/moradores/apiSliceMoradores")
             .useUpdateMoradorMutation.mockReturnValue([data]);
         require("../../../features/api/moradores/apiSliceMoradores")
@@ -53,26 +73,15 @@ describe("PerfilMorador", () => {
         require("../../../features/api/moradores/apiSliceMoradores")
             .useGetMoradorPeloIdQuery.mockReturnValue(data);
         require("../../../features/api/moradores/apiSliceMoradores")
-        .useAddMoradorMutation.mockReturnValue([data]);
+            .useAddMoradorMutation.mockReturnValue([data]);
     });
 
-    
 
-    const store = configureStore({
-        reducer: {
-            [apiSliceMoradores.reducerPath]: () => apiSliceMoradores.reducer, 
-        },
-        
-    });
+
+
 
     test("should render correctly", () => {
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilMorador />
-                </MemoryRouter>
-            </Provider>
-        );
+        renderComponent()
 
         const h4NomeElement = screen.getAllByRole("heading", { level: 4 });
         const nomeElement = h4NomeElement.find(el => el.textContent.includes("Nome"))
@@ -85,13 +94,7 @@ describe("PerfilMorador", () => {
             isLoading: true,  // Ainda está carregando
             isError: false,
         });
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilMorador />
-                </MemoryRouter>
-            </Provider>
-        );
+        renderComponent();
 
         const loadingEle = screen.getByTestId("loading");
 
@@ -100,13 +103,7 @@ describe("PerfilMorador", () => {
 
     test("should show 'nenhum veiculo'", () => {
 
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilMorador />
-                </MemoryRouter>
-            </Provider>
-        );
+        renderComponent();
 
         const pElement = screen.getByText("nenhum veiculo");
 
@@ -114,13 +111,7 @@ describe("PerfilMorador", () => {
     });
     test("should show 'sem dependente'", () => {
 
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PerfilMorador />
-                </MemoryRouter>
-            </Provider>
-        );
+        renderComponent();
 
         const pElement = screen.getByText("sem dependentes");
 
@@ -128,28 +119,19 @@ describe("PerfilMorador", () => {
     });
 
     test("should go to update-morador page", async () => {
-        user.setup();
-        render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <Routes>
-                        <Route path="/" element={<PerfilMorador />} />
-                        <Route path="update-morador/:id" element={<FormMoradores />} />
-                    </Routes>
-                </MemoryRouter>
-            </Provider>
-        );
+        
+        renderComponent()
 
 
         const updateLinkElement = screen.getByRole('link', { name: 'atualizar' });
 
-        console.log(updateLinkElement.innerHTML)
+
 
         expect(updateLinkElement).toBeInTheDocument();
 
         await user.click(updateLinkElement)
 
-        const campoNome = screen.queryByPlaceholderText("nome");
+        const campoNome = screen.getByPlaceholderText(/^nome/i);
 
         await waitFor(() => {
             expect(campoNome).toBeInTheDocument();

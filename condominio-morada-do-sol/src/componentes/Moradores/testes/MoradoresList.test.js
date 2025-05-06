@@ -1,44 +1,84 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import MoradoresList from "../MoradoresList";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter } from "react-router-dom";
 import '@testing-library/jest-dom';
+import { Provider } from "react-redux";
+import { apiSliceMoradores, useGetMoradoresQuery } from "../../../features/api/moradores/apiSliceMoradores";
+import * as apiMoradores from "../../../features/api/moradores/apiSliceMoradores"
 
+const store = {
+  getState: jest.fn(),
+  subscribe: jest.fn(),
+  dispatch: jest.fn()
+}
+const mockMoradores = [
+  { id: 1, nome: 'Andre Luis', sobrenome: 'Silva', bloco: 'A', apartamento: '101' },
+  { id: 2, nome: 'Maria José', sobrenome: 'Oliveira', bloco: 'B', apartamento: '202' },
+];
 
+jest.mock('../../../features/api/moradores/apiSliceMoradores', () => ({
+  useGetMoradoresQuery: jest.fn(() => ({data: mockMoradores, isLoading: false, isSuccess: true, isError: false, error: {status: null}}))
+}))
 
+const renderComponent = () => {
+  return render (
+    <Provider store={store}>
+      <MemoryRouter>
+            <MoradoresList />
+      </MemoryRouter>
+    </Provider>
+  )
+}
 
 describe('Moradores List', () => {
+beforeEach(() => {
+  jest.clearAllMocks()
+  apiMoradores.useGetMoradoresQuery.mockReturnValue({data: mockMoradores, isLoading: false, isSuccess: true, isError: false, error: {status: null}})
+})
 
-  const mockMoradores = [
-    { id: 1, nome: 'Andre Luis', sobrenome: 'Silva', bloco: 'A', apartamento: '101' },
-    { id: 2, nome: 'Maria José', sobrenome: 'Oliveira', bloco: 'B', apartamento: '202' },
-  ];
-
-  test("should show loading indicator when isLoading is true", () => {
-    render(<MoradoresList isLoading={true} />, { wrapper: MemoryRouter })
+   test("should show loading indicator when isLoading is true", () => {
+    apiMoradores.useGetMoradoresQuery.mockReturnValue({data: mockMoradores, isLoading: true, isSuccess: false, isError: false, error: {status: null}})
+    renderComponent();
     
     let carregando = screen.getByText(/Carregando/i)
 
 
     expect(carregando).toBeInTheDocument();
 
-  })
+  }) 
   test("should show moradores when isSuccess is true", () => {
-    render(<MoradoresList isSuccess={true} moradores={mockMoradores}/>, { wrapper: MemoryRouter })
+    renderComponent()
     
-    let nome = screen.getByText(/João/i)
+    let andreMorador = screen.getByText(/Andre Luis/i)
+    let mariaMorador = screen.getByText(/Maria José/i)
 
-    expect(nome).toBeInTheDocument();
+    expect(andreMorador).toBeInTheDocument();
+    expect(mariaMorador).toBeInTheDocument();
 
-  })
-  test("should show 'Usuario deslogado' when isError is true", () => {
-    render(<MoradoresList isError={true} moradores={mockMoradores}/>, { wrapper: MemoryRouter })
+  }) 
+   test("should show 'Usuario deslogado' when isError is true and error.status is null", () => {
+    apiMoradores.useGetMoradoresQuery
+    .mockReturnValue({data: mockMoradores, isLoading: false, isSuccess: false, isError: true, error: {status: null}})
+    renderComponent();
     
-    let logged = screen.getByText(/Usuario deslogado/i)
+    let logged = screen.getByText(/Usuário deslogado. Você será.*/i)
 
     expect(logged).toBeInTheDocument();
 
   })
+  test("should show 'Serviço indisponível' when isError is true and error.status is FETCH_ERROR", () => {
+    apiMoradores.useGetMoradoresQuery
+    .mockReturnValue({data: mockMoradores, isLoading: false, isSuccess: false, isError: true, error: {status: "FETCH_ERROR"}})
+    renderComponent();
+    
+    let logged = screen.getByText(/Serviço indisponível. Você será.*/i)
+
+    expect(logged).toBeInTheDocument();
+
+  })
+   
+
   test("should have 2 moradores", () => {
     render(<MoradoresList isError={false} isSuccess={true} isLoading={false} moradores={mockMoradores}/>, { wrapper: MemoryRouter })
     

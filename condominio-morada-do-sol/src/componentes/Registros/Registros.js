@@ -29,7 +29,7 @@ const Registros = () => {
   }, [todosOsRegistros]);
   
   
-  console.log(todosOsRegistros)
+  
   // Função de filtro (por data ou bloco/apartamento)
   const handleSearch = useCallback(() => {
     let filtrados = [];
@@ -108,8 +108,8 @@ const Registros = () => {
       </div>
 
       <section className="registros">
-        {registros.map((registro) => (
-          <Link key={registro.id} to={`./detalhes-do-registro/${registro.id}`}>
+        {registros.length === 0 ? "Sem registros": registros.map((registro) => (
+          <Link data-testid="linkToPerfilRegistro" key={registro.id} to={`./detalhes-do-registro/${registro.id}`}>
             <div className="registro">
               <p className="morador">{registro.morador?.nome || '*******'}</p>
               <p className="apartamento">{registro.morador?.apartamento || '*****'}</p>

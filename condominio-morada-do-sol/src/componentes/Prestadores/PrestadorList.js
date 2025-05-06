@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchPrestadores } from "../../features/api/prestadores/apiPrestadorSlice";
+import { fetchPrestadores, getPrestadores } from "../../features/api/prestadores/apiPrestadorSlice";
 import BtnAdicionar from "../Outros/BtnAdicionar";
+import { Link } from "react-router-dom";
 
 const PrestadorList = () => {
   const [modoBusca, setModoBusca] = useState("nome");
@@ -12,7 +12,7 @@ const PrestadorList = () => {
 
   const dispatch = useDispatch();
 
-  const prestadores = useSelector((state) => state.prestador.prestadores);
+  const prestadores = useSelector((state) => getPrestadores(state));
 
   // Fetch ao carregar
   useEffect(() => {
@@ -101,8 +101,8 @@ const PrestadorList = () => {
             <h1>Nenhum prestador encontrado</h1>
           ) : (
             listaDePrestadores.map((p) => (
-              <div className="prestador" data-testid="prestador" key={p.id}>
-                <Link to={`perfil-prestador/${p.id}`} data-testid="prest-profile">
+              <div className="prestador"  key={p.id}>
+                <Link to={`perfil-prestador/${p.id}`} data-testid="prestador">
                   <div className="info">
                     <div className="img">
                       <img
