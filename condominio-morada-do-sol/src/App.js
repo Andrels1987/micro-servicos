@@ -75,9 +75,10 @@ const App = () => {
           {/* {user ? (<button onClick={makeLogout}>Logout</button>) : user.username} */}
         </header>
         <div className="view-dados">
-          <Routes>
-            
-              <Route index element={<Login />} />
+          <Routes>            
+              
+                <Route index element={<Login />} />
+             
               <Route path={"/prestadores"}>
                 <Route index element={<PrestadorList />} />
                 <Route path={"add-prestador"} element={<FormPrestador />} />
