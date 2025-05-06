@@ -4,7 +4,7 @@ import PerfilRegistro from "../PerfilRegistro"
 import React from "react"
 import { useDispatch } from "react-redux"
 import { apiSliceServicosPrestados, useGetServicosPrestadosQuery, useRegistrarEncerramentoDoServicoMutation } from "../../../features/api/servicos/apiServicosPrestados"
-import { MemoryRouter, useParams } from "react-router"
+import { MemoryRouter, useParams } from "react-router-dom"
 import * as apiServicos from "../../../features/api/servicos/apiServicosPrestados"
 import user from "@testing-library/user-event"
 const mockServicos = [
@@ -27,8 +27,8 @@ const mockServicos = [
     }
 ]
 
-jest.mock("react-router", () => ({
-    ...jest.requireActual("react-router"),
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
     useParams: jest.fn(() => ({ idRegistro: "1" }))
 }))
 jest.mock("react-redux", () => ({

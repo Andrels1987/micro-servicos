@@ -81,7 +81,6 @@ const AdicionarVeiculos = ({ morador, refetch }) => {
     const res = await buscarVeiculo({ placa: veiculo.placa })
 
     if (res?.data?.err) {
-      console.log("ENTROU AQUI", res.data.err)
       setDisableEnviar(false)
       setDisableAssociar(true)
     } else {

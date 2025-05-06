@@ -29,7 +29,7 @@ const Veiculos = () => {
   useEffect(() => {
     requestAnimationFrame(() => {
       listRef.current?.scrollTo(0, 0);
-    });
+    }); 
   }, []);
 
   const handleSearch = useCallback(() => {

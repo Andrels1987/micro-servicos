@@ -3,6 +3,7 @@ import { getFetchBaseQuery } from '../autenticacao/baseQuery';
 const url = process.env.REACT_APP_APP_BASE_URL_SERVICO_VEICULO
 
 
+console.log(url);
 
 
 export const veiculoApiSlice = createApi({

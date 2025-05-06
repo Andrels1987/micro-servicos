@@ -29,7 +29,7 @@ const FormPrestador = () => {
     }
   }, [idPrestador, prestadorExistente]);
 
-  console.log(prestadorExistente);
+  
   
 
   const handleInputChange = (e) => {
@@ -49,7 +49,6 @@ const FormPrestador = () => {
 
   const handleAddVeiculo = (e) => {
     e.preventDefault();
-    console.log("Adicionar veículo");
   };
 
   const isFormValid = 

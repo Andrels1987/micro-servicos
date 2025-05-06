@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Loading from '../../Loading'
 import { useGetMoradorPeloIdQuery } from '../../features/api/moradores/apiSliceMoradores'
@@ -19,7 +19,7 @@ const PerfilMorador = () => {
   const navigate = useNavigate()
   
 
-console.log(morador);
+
 
 
   useEffect(() => {

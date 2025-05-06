@@ -1,20 +1,25 @@
 
-import {  render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import Login from "../Login";
 import React from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSliceAutenticacao } from "../../../features/api/autenticacao/apiSliceAuth";
-import {  MemoryRouter } from "react-router";
+import { MemoryRouter } from "react-router-dom";
 import user from "@testing-library/user-event"
 import PrestadorList from '../../Prestadores/PrestadorList'
 import { apiPrestadorSlice } from "../../../features/api/prestadores/apiPrestadorSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 
 const mockLogin = jest.fn();
-
+const mockNavigate = jest.fn()
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn()
+}))
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
     useSelector: jest.fn(),
@@ -37,7 +42,7 @@ jest.mock("../../../features/api/autenticacao/apiSliceAuth", () => ({
 jest.mock("../../../features/api/prestadores/apiPrestadorSlice", () => ({
     getPrestadores: jest.fn(() => ({ data: [] })),
     getPrestadorPeloId: jest.fn(() => ({})),
-    fetchPrestadores: jest.fn(() => ({data: []})),
+    fetchPrestadores: jest.fn(() => ({ data: [] })),
     apiPrestadorSlice: {
         reducer: {
             queries: {},
@@ -60,8 +65,8 @@ describe("Login", () => {
     }
 
     beforeEach(() => {
-        
         jest.clearAllMocks();
+        useNavigate.mockReturnValue(mockNavigate)
         useSelector.mockReturnValue([])//useSelector retorna objeto ou array de objetos
         useDispatch.mockReturnValue(mockDispatch)//useDispatch retorna uma função
         require("../../../features/api/prestadores/apiPrestadorSlice")
@@ -75,16 +80,16 @@ describe("Login", () => {
         reducer: {
             [apiPrestadorSlice.reducerPath]: () => apiPrestadorSlice.reducer,
             [apiSliceAutenticacao.reducerPath]: () => apiSliceAutenticacao.reducer
-        }, 
-        
+        },
+
     })
 
-    test('should  render correctly', () => {
+     test('should  render correctly', () => {
         render(
             <Provider store={store}>
-            <MemoryRouter>
-                <Login />
-            </MemoryRouter>
+                <MemoryRouter>
+                    <Login />
+                </MemoryRouter>
             </Provider>
         )
 
@@ -97,11 +102,11 @@ describe("Login", () => {
         expect(imputPassword).toBeInTheDocument();
         expect(buttonLogin).toBeInTheDocument();
         expect(textLogin).toHaveLength(2)
-       
-    })
 
-    test('shoud go to prestadores', async() => {       
-        
+    }) 
+
+    test('shoud go to prestadores', async () => {
+
         user.setup();
         render(
             <Provider store={store} >
@@ -112,18 +117,18 @@ describe("Login", () => {
             </Provider>
         )
 
-        const buttonElement = screen.getByRole('button', {name: /login/i})
+        const buttonElement = screen.getByRole('button', { name: /login/i })
         const inputUsername = screen.getByPlaceholderText("enter username");
         const imputPassword = screen.getByPlaceholderText("enter password");
 
-        
+
         expect(buttonElement).toBeInTheDocument();
 
 
         await user.type(inputUsername, "andre");
         await user.type(imputPassword, "als1987");
         await user.click(buttonElement);
-        
+
         expect(sessionStorage.getItem("jwt")).toBe('fake-token')
         const labelElem = screen.getByLabelText(/modo de busca/i);
         expect(mockDispatch).toHaveBeenCalled();

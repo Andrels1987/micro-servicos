@@ -17,7 +17,7 @@ const Login = () => {
   const makeLogin = async (e) => {
     e.preventDefault();
     const { data: t } = await getLogin({ login });
-    console.log("Login : ", t);
+    
     if (t.token !== null) {
       sessionStorage.setItem("jwt", t.token)
       dispatch(setToken(t.token))

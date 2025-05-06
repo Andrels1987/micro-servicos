@@ -25,7 +25,6 @@ import { fetchPrestadores, getPrestadorPeloId } from "../../features/api/prestad
 // theme.js ou theme.ts
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider, CssBaseline } from '@mui/material';
-import { pointer } from "@testing-library/user-event/dist/cjs/pointer/index.js";
 
 const darkTheme = createTheme({
   palette: {
@@ -120,13 +119,13 @@ const RegistrarEntrada = () => {
       dispatch(fetchPrestadores());
     }
     
-  }, [dispatch]);
+  }, [dispatch, prestador]);
   
 
   
 
 
-  console.log(tipoDeServico, " ", observacaoSobreServico);
+  
 
 
 

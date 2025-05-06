@@ -89,7 +89,7 @@ function PerfilRegistro() {
     }
   };
 
-  console.log(servicosPrestados)
+  
   if (!registro) return <Typography color="white">Carregando registro...</Typography>;
 
   return (

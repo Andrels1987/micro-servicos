@@ -50,7 +50,7 @@ const AdicionarDependente = ({morador, refetch}) => {
             dependenteModel.foto = res.data.foto;
             dependenteModel.nome = res.data.nome;
             dependenteModel.sobrenome = res.data.sobrenome;
-            console.log("RESULT : ", res.data)
+            
             setDependente(old =>( 
                 {...dependente, 
                     nome: dependenteModel.nome, 
@@ -67,7 +67,6 @@ const AdicionarDependente = ({morador, refetch}) => {
         e.preventDefault();
         const resposta = associarDependente({idMorador: morador.id, dependente})
         resposta.then(res => {
-            console.log(res.data);
             refetch();
         })  
     }

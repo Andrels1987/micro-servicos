@@ -29,7 +29,7 @@ const Registros = () => {
   }, [todosOsRegistros]);
   
   
-  console.log(registros)
+  
   // Função de filtro (por data ou bloco/apartamento)
   const handleSearch = useCallback(() => {
     let filtrados = [];

@@ -1,9 +1,7 @@
-	import React from "react";
+import React from "react";
 import "./App.css";
 
 
-import { Routes, Route, Link } from "react-router-dom";
-import HomePage from "./componentes/HomePage";
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -17,9 +15,9 @@ import FormMoradores from "./componentes/Moradores/FormMoradores";
 import PerfilMorador from "./componentes/Moradores/PerfilMorador";
 import Veiculos from "./componentes/Veiculos/Veiculos";
 import PerfilVeiculo from "./componentes/Veiculos/PerfilVeiculo";
-
+import Login from "./componentes/LoginRegistration/Login"
 import RegistrarEntrada from "./componentes/Registros/RegistrarEntrada";
-import Login from "./componentes/LoginRegistration/Login";
+
 
 import PrestadorList from "./componentes/Prestadores/PrestadorList";
 import PerfilPrestador from "./componentes/Prestadores/PerfilPrestador";
@@ -27,17 +25,18 @@ import FormPrestador from "./componentes/Prestadores/FormPrestador";
 import ArticleIcon from '@mui/icons-material/Article';
 import Registros from "./componentes/Registros/Registros";
 import PerfilRegistro from "./componentes/Registros/PerfilRegistro";
+import { Link, Route, Routes } from "react-router-dom";
 
 
 
-const App = () => { 
-/*  const dispatch = useDispatch();
-  const makeLogout = async (e) => {
-    const t = dispatch((logoutApp))
-    
-  } */
-  
- 
+const App = () => {
+  /*  const dispatch = useDispatch();
+    const makeLogout = async (e) => {
+      const t = dispatch((logoutApp))
+      
+    } */
+
+
 
   return (
     <div className="container-app">
@@ -77,35 +76,36 @@ const App = () => {
         </header>
         <div className="view-dados">
           <Routes>
-                <Route path="/" element={<HomePage />}>
-                <Route index element={<Login />} />
-             <Route path={"prestadores"} element={<PrestadorPage/>}>
-                <Route index element={<PrestadorList  />} />
-                <Route path={"add-prestador"} element={<FormPrestador  />} />
-                <Route path={"update-prestador/:idPrestador"} element={<FormPrestador />} /> 
-                <Route path={"perfil-prestador/:idPrestador"} element={<PerfilPrestador  />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo  />} />           
-              </Route> 
+            
+              <Route index element={<Login />} />
+              <Route path={"/prestadores"}>
+                <Route index element={<PrestadorList />} />
+                <Route path={"add-prestador"} element={<FormPrestador />} />
+                <Route path={"update-prestador/:idPrestador"} element={<FormPrestador />} />
+                <Route path={"perfil-prestador/:idPrestador"} element={<PerfilPrestador />} />
+                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo />} />
+              </Route>
 
-                
-              <Route path="moradores/" element={<MoradorLayout  />}>
+
+              <Route path="moradores" >
                 <Route index element={<MoradoresList />} />
                 <Route path="add-morador/" element={<FormMoradores />} />
-                <Route path="perfil/:id" element={<PerfilMorador  />} />
-                <Route path="update-morador/:id" element={<FormMoradores  />} />
+                <Route path="perfil/:id" element={<PerfilMorador />} />
+                <Route path="update-morador/:id" element={<FormMoradores />} />
               </Route>
+
               <Route path="veiculos">
-                <Route index element={<Veiculos  />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo  />} />
-              </Route> 
+                <Route index element={<Veiculos />} />
+                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo />} />
+              </Route>
               <Route path="registros">
                 <Route index element={<Registros />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo  />} />
+                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo />} />
                 <Route path={"registrar-entrada/:idPrestador"} element={<RegistrarEntrada />} />
-                <Route path={"detalhes-do-registro/:idRegistro"} element={<PerfilRegistro />} /> 
-              </Route> 
-              
-            </Route>
+                <Route path={"detalhes-do-registro/:idRegistro"} element={<PerfilRegistro />} />
+              </Route>
+
+            
           </Routes>
         </div>
       </section>

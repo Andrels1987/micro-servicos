@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import { useGetVeiculoPeloIdQuery } from '../../features/api/veiculos/veiculoApiSlice';
 
 const PerfilVeiculo = () => {
@@ -7,11 +7,12 @@ const PerfilVeiculo = () => {
   const { id } = useParams();
 
   const { data: veiculo, isLoading, isError } = useGetVeiculoPeloIdQuery({ id });
-  console.log(veiculo);
+  
   
   if (isLoading) return <p className="text-center text-gray-300 mt-10">Carregando veículo...</p>;
   if (isError || !veiculo) return <p className="text-center text-red-400 mt-10">Erro ao carregar veículo.</p>;
-
+  console.log(veiculo);
+  
   const { marca, modelo, cor, placa, foto, motorista } = veiculo;
 
   return (

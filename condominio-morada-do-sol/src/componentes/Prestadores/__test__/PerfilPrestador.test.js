@@ -6,7 +6,7 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import reducer, { apiPrestadorSlice } from "../../../features/api/prestadores/apiPrestadorSlice";
 import { apiSliceServicosPrestados, useGetServicosPrestadosQuery } from "../../../features/api/servicos/apiServicosPrestados";
-import { MemoryRouter, Route, Routes, useNavigate, useParams } from "react-router";
+import { MemoryRouter, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import user from "@testing-library/user-event"
 import * as servicoApi from '../../../features/api/servicos/apiServicosPrestados'
 import * as prestadorApi from '../../../features/api/prestadores/apiPrestadorSlice'
@@ -17,8 +17,8 @@ import PrestadorPage from '../PrestadorPage';
 import PrestadorList from "../PrestadorList";
 import Registros from '../../Registros/Registros'
 
-jest.mock('react-router', () => ({
-    ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
     useNavigate: jest.fn(),
     useParams: jest.fn()
 }))

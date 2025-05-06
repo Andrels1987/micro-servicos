@@ -1,0 +1,14 @@
+Veiculos.test.js - exceção de pathname
+PerfilVeiculo.test.js - resolvido - funcionando
+PerfilRegistro.test.js - resolvido - funcionando
+RegistrarEntrada.test.js - funcionando
+Registros.test.js - funcionando
+FormPrestador.test.js - funcionando
+PerfilPrestador.test.js - erro useParams import do react-router ao inves de react-router-dom - resolvido e funcionando
+PrestadorList.test.js - erro de prestadores undefined resolvido e funcionando
+AdicionarDependente.test.js funcionando
+AdicionarVeiculo.test.js - funcionando
+BtnAdicionar.test.js erro de react-router ao inves de react-router-dom resolvido e funcionando
+FormMoradores.test.js funcionando
+MoradoresList.test.js funcionando
+PerfilMorador.test.js funcionando

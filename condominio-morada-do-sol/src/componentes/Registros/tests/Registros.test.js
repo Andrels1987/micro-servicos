@@ -67,8 +67,7 @@ const renderComponent = () => {
                 <Routes>
                     <Route path="/" element={<Registros />}/>
                     <Route path="detalhes-do-registro/:idRegistro" element={<PerfilRegistro />}/>
-                </Routes>
-                
+                </Routes>                
             </MemoryRouter>
         </Provider>
     )
