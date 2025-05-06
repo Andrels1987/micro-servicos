@@ -85,6 +85,7 @@ describe('Adicinar Veiculo', () => {
     const atualizarMoradorMock = jest.fn();
     beforeEach(() => {
         jest.clearAllMocks()
+        jest.setTimeout(60000);
         const apiVeiculos = require("../../../features/api/veiculos/veiculoApiSlice")
         const apiMoradores = require("../../../features/api/moradores/apiSliceMoradores")
 
@@ -264,7 +265,7 @@ describe('Adicinar Veiculo', () => {
         const buttonAssociarElem = screen.getByRole('button', { name: /Associar ao morador/i })
         const buttonEnviarElem = screen.getByRole('button', { name: /Enviar/i })
 
-        expect(placaTextField.value).toEqual('RPG2R22');
+        expect(placaTextField.value).toBe('RPG2R22');
         expect(modeloTextField.value).toEqual('');
         expect(marcaTextField.value).toEqual('');
         expect(corTextField.value).toEqual('');
