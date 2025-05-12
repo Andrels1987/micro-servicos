@@ -71,9 +71,10 @@ describe("Login", () => {
         useDispatch.mockReturnValue(mockDispatch)//useDispatch retorna uma função
         require("../../../features/api/prestadores/apiPrestadorSlice")
             .getPrestadores.mockReturnValue([dataPrestadores.data])
+
         require("../../../features/api/autenticacao/apiSliceAuth")
             .useLoginMutation.mockReturnValue([
-                mockLogin.mockResolvedValue({ data: { token: "fake-token" } })
+                mockLogin.mockResolvedValue({ data: { response: "fake-token" } })
             ]);
     });
     const store = configureStore({
@@ -84,7 +85,7 @@ describe("Login", () => {
 
     })
 
-     test('should  render correctly', () => {
+    test('should  render correctly', () => {
         render(
             <Provider store={store}>
                 <MemoryRouter>
@@ -103,7 +104,7 @@ describe("Login", () => {
         expect(buttonLogin).toBeInTheDocument();
         expect(textLogin).toHaveLength(2)
 
-    }) 
+    })
 
     test('shoud go to prestadores', async () => {
 
@@ -129,7 +130,9 @@ describe("Login", () => {
         await user.type(imputPassword, "als1987");
         await user.click(buttonElement);
 
-        expect(sessionStorage.getItem("jwt")).toBe('fake-token')
+        await waitFor(() => {
+            expect(sessionStorage.getItem("jwt")).toBe('fake-token')
+        })
         const labelElem = screen.getByLabelText(/modo de busca/i);
         expect(mockDispatch).toHaveBeenCalled();
         expect(labelElem).toBeInTheDocument();

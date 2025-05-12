@@ -1,26 +1,26 @@
 import React, { useCallback,  useEffect, useState } from 'react';
 import {  useLazyGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados';
 import { format } from 'date-fns';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 
 import Loading from '../../Loading';
 
 const Registros = () => {
 
-  const [ fetchServicosrestados, {data: todosOsRegistros, isLoading }] = useLazyGetServicosPrestadosQuery( );
+  const [ fetchServicosPrestados, {data: todosOsRegistros, isLoading }] = useLazyGetServicosPrestadosQuery( );
 
   const [modoBusca, setModoBusca] = useState('data');
   const [registros, setRegistros] = useState([]);
   const [filtroData, setFiltroData] = useState('');
   const [filtroBlocoApt, setFiltroBlocoApt] = useState({ bloco: '', apartamento: '' });
-
+  
   // Atualiza a lista de registros assim que a API retornar
   useEffect(() => {
 
-      fetchServicosrestados();
+      fetchServicosPrestados();
     
-  }, [fetchServicosrestados]);
+  }, [fetchServicosPrestados]);
 
   useEffect(() => {
     if(todosOsRegistros){

@@ -13,10 +13,17 @@ export const apiSliceMoradores = createApi({
                 url: '/moradores',
                 method: 'GET',
             }),
-            providesTags: ['moradores']
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ id }) => ({ type: 'moradores', id })), // adiciona tags por ID
+                        { type: 'moradores', id: 'LIST' }, // tag geral da lista
+                    ]
+                    : [{ type: 'moradores', id: 'LIST' }],
+
         }),
         addMorador: builder.mutation({
-            query: ({morador}) => ({
+            query: ({ morador }) => ({
                 url: "/morador/add",
                 method: 'POST',
                 body: {
@@ -48,27 +55,27 @@ export const apiSliceMoradores = createApi({
                     dependentes: morador.dependentes
                 }
             }),
-            invalidatesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id }]
-         
+            invalidatesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id },
+            { type: 'moradores', id: 'LIST' }]
         }),
         getMoradorPeloId: builder.query({
             query: (id) => ({
                 url: `/moradores/perfil/${id}`,
                 method: 'GET',
             }),
-            providesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id }],
+            providesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id }, {type: 'moradores', id: 'LIST' }],
         }),
         getMoradorPeloDocumento: builder.query({
-            query: ({documento}) => ({
+            query: ({ documento }) => ({
                 url: `/morador/documento/${documento}`,
                 method: 'GET',
             }),
-            providesTags: (result, error, {documento}) => [{ type: 'moradores', documento: documento }],
+            providesTags: (result, error, { documento }) => [{ type: 'moradores', documento: documento }],
         }),
         associarDependenteAoMorador: builder.mutation({
-            query: ({idMorador, dependente}) => ({
+            query: ({ idMorador, dependente }) => ({
                 url: `/adicionardependente/morador/${idMorador}`,
-                body:{
+                body: {
                     parentesco: dependente.parentesco,
                     _id: dependente.id
                 },
@@ -88,7 +95,7 @@ export const apiSliceMoradores = createApi({
                     empresaEntregador: entregaServico.empresaEntregador,
                     numeroDocumentoEntregador: entregaServico.numeroDocumentoEntregador,
                     idEntregador: entregaServico.idEntregador,
-                    nomeMorador: entregaServico.nomeMorador, 
+                    nomeMorador: entregaServico.nomeMorador,
                     bloco: entregaServico.bloco,
                     apartamento: entregaServico.apartamento,
                     tipoDeServico: entregaServico.tipoDeServico,
@@ -99,9 +106,9 @@ export const apiSliceMoradores = createApi({
         }),
         getEntregas: builder.query({
             query: () => ({
-                url:`/servicosprestados`,
+                url: `/servicosprestados`,
                 method: 'GET',
-                }),
+            }),
             providesTags: ['moradores']
         }),
         getVeiculos: builder.query({
@@ -112,21 +119,21 @@ export const apiSliceMoradores = createApi({
             providesTags: ['moradores']
         }),
         getVeiculoPeloId: builder.query({
-            query: ({ id}) => ({
+            query: ({ id }) => ({
                 url: `/veiculo/${id}`,
                 method: 'GET',
             }),
             providesTags: ['moradores']
         }),
         getProprietarioPeloIdVeiculo: builder.query({
-            query: ({ id}) => ({
+            query: ({ id }) => ({
                 url: `/moradores/proprietario/${id}`,
                 method: 'GET',
             }),
             providesTags: ['moradores']
         }),
         getProprietarioPelaPlacaVeiculo: builder.query({
-            query: ({placa}) => ({
+            query: ({ placa }) => ({
                 url: `/morador/veiculo/placa/${placa}`,
                 method: 'GET',
             }),
@@ -154,6 +161,6 @@ export const {
     useGetVeiculoPeloIdQuery,
     useGetProprietarioPeloIdVeiculoQuery,
     useGetProprietarioPelaPlacaVeiculoQuery,
-    useLogoutAppMutation, 
+    useLogoutAppMutation,
     useAssociarDependenteAoMoradorMutation
 } = apiSliceMoradores

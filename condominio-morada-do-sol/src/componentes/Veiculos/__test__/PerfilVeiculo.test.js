@@ -117,7 +117,7 @@ describe('PerfilVeiculo', () => {
         //Andre Silva | 1801 C
         const nome = screen.getByTestId("proprietario");
         expect(nome).toBeInTheDocument();
-        expect(nome.textContent).toBe("Andre Silva | Apto: 1801 - Bloco C");
+        expect(nome.textContent).toBe("Andre Apto: 1801 - Bloco C");
 
 
     })

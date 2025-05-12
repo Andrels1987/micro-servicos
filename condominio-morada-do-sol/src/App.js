@@ -9,8 +9,6 @@ import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 
 
 import MoradoresList from "./componentes/Moradores/MoradoresList";
-import PrestadorPage from "./componentes/Prestadores/PrestadorPage";
-import MoradorLayout from "./componentes/Moradores/MoradorLayout";
 import FormMoradores from "./componentes/Moradores/FormMoradores";
 import PerfilMorador from "./componentes/Moradores/PerfilMorador";
 import Veiculos from "./componentes/Veiculos/Veiculos";
@@ -26,15 +24,13 @@ import ArticleIcon from '@mui/icons-material/Article';
 import Registros from "./componentes/Registros/Registros";
 import PerfilRegistro from "./componentes/Registros/PerfilRegistro";
 import { Link, Route, Routes } from "react-router-dom";
+import EsqueceSenha from "./componentes/LoginRegistration/EsqueceSenha";
+import RedefinirSenha from "./componentes/LoginRegistration/RedefinirSenha";
 
 
 
 const App = () => {
-  /*  const dispatch = useDispatch();
-    const makeLogout = async (e) => {
-      const t = dispatch((logoutApp))
-      
-    } */
+  
 
 
 
@@ -101,9 +97,13 @@ const App = () => {
               </Route>
               <Route path="registros">
                 <Route index element={<Registros />} />
-                <Route path="perfil-veiculo/:id" element={<PerfilVeiculo />} />
+                <Route path={"perfil-veiculo/:id"} element={<PerfilVeiculo />} />
                 <Route path={"registrar-entrada/:idPrestador"} element={<RegistrarEntrada />} />
                 <Route path={"detalhes-do-registro/:idRegistro"} element={<PerfilRegistro />} />
+              </Route>
+              <Route path="esqueceu-senha">
+                <Route index element={<EsqueceSenha />} />
+                <Route path={"reset-password"} element={<RedefinirSenha />}/>
               </Route>
 
             

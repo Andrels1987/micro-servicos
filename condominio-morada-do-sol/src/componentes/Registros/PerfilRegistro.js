@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useDispatch } from "react-redux";
 
@@ -28,6 +28,7 @@ const darkTheme = createTheme({
 function PerfilRegistro() {
   const { idRegistro } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const { data: servicosPrestados } = useGetServicosPrestadosQuery();
   const [registrarEncerramento] = useRegistrarEncerramentoDoServicoMutation();
@@ -83,6 +84,7 @@ function PerfilRegistro() {
         ...prev,
         dataEncerramentoDoServico: format(new Date(), "dd-MM-yyyy HH:mm:ss"),
       }));
+      navigate("/registros")
     } catch (error) {
       console.error("Erro ao registrar encerramento:", error);
       alert("Erro ao registrar encerramento do serviço.");
