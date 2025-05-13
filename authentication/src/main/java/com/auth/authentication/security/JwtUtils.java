@@ -2,6 +2,7 @@ package com.auth.authentication.security;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;
@@ -10,9 +11,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 @Component
 public class JwtUtils {
     
-    private final String SECRET = "my-secret-key";
+    @Value("${spring-secret-key}")
+    private String SECRET;
 
     public String generateToken(String username){
+        System.out.println("SECRET: "+SECRET);
         return JWT.create()
         .withSubject(username)
         .withExpiresAt(new Date(System.currentTimeMillis() + 86400000))
@@ -25,8 +28,9 @@ public class JwtUtils {
         .verify(token)
         .getSubject();
     }
-     public boolean issTokenValid(String token, UserDetails userDetails){
+     public boolean isTokenValid(String token, UserDetails userDetails){
         String username = extractUsername(token);
         return username.equals(userDetails.getUsername());
      }
+    
 }

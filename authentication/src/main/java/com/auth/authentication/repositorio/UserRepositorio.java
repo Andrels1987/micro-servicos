@@ -8,4 +8,5 @@ import com.auth.authentication.models.User;
 
 public interface UserRepositorio extends MongoRepository<User, String>  {
     Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 }

@@ -24,7 +24,7 @@ const RedefinirSenha = () => {
     try {
       const response = await resetPassword({token, newPassword}).unwrap()
       console.log(response);
-      setMessage(response.data.message || 'Senha redefinida com sucesso!');
+      setMessage(response || 'Senha redefinida com sucesso!');
     } catch (error) {
       //console.error(error);
       setMessage('Erro ao redefinir senha');

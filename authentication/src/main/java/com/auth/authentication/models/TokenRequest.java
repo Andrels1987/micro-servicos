@@ -1,5 +1,7 @@
 package com.auth.authentication.models;
 
+import java.time.LocalDateTime;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,12 +13,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user")
-public class User {
+@Document
+public class TokenRequest {
     @Id
     private ObjectId id;
-    private String username;
-    private String password;
-    private String role;
-    private String email;
+    private ObjectId userid;
+    private String token;
+    private LocalDateTime expirationDate;
+
+    public TokenRequest(ObjectId userid, String token, LocalDateTime expTime){
+        this.userid = userid;
+        this.token = token;
+        this.expirationDate = expTime;
+    }
 }

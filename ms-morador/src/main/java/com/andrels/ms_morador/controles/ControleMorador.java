@@ -14,6 +14,7 @@ import com.andrels.ms_morador.modelos.DependenteDto;
 import com.andrels.ms_morador.modelos.Morador;
 import com.andrels.ms_morador.modelos.MoradorDto;
 import com.andrels.ms_morador.modelos.ResponseDto;
+import com.andrels.ms_morador.modelos.ResponseId;
 import com.andrels.ms_morador.modelos.VeiculoDto;
 import com.andrels.ms_morador.serviceImpl.ServicoMoradorImpl;
 
@@ -100,12 +101,10 @@ public class ControleMorador {
     }
 
     @PutMapping("update/morador/{id}")
-    public String UpdateMorador(@PathVariable("id") String id, @RequestBody Morador morador){
-        System.out.println();
-        System.out.println();
-        System.out.println("Entrou em update");
-        System.out.println();
-        return servicoMoradorImpl.updateMorador(id, morador);
+    public ResponseEntity<ResponseId> UpdateMorador(@PathVariable("id") String id, @RequestBody Morador morador){
+    
+        var response = servicoMoradorImpl.updateMorador(id, morador);
+        return ResponseEntity.ok().body(new ResponseId(response));
     }
     @PutMapping("adicionardependente/morador/{id}")
     public ResponseEntity<ResponseDto> adicionarDependente(@PathVariable("id") String id, @RequestBody DependenteDto dependente){
