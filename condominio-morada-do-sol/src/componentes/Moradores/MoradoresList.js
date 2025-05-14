@@ -32,6 +32,8 @@ const MoradoresList = () => {
         }
     }, [moradores]);
 
+
+    
     //atualiza o contador
     useEffect(() => {
         if ((isError && error)) {

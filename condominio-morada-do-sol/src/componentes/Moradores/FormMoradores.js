@@ -42,6 +42,8 @@ const FormMoradores = () => {
     setMorador(prev => ({ ...prev, [name]: value }));
   };
 
+  console.log(fetchedMorador);
+  
   const handleCriarMorador = async (e) => {
     e.preventDefault();
 
@@ -52,7 +54,8 @@ const FormMoradores = () => {
 
     try {
       if (id) {
-        await updateMorador({ morador }).unwrap();
+        console.log(morador);        
+        await updateMorador(morador).unwrap();
         alert("Morador atualizado com sucesso.");
       } else {
         await addMorador(morador).unwrap();

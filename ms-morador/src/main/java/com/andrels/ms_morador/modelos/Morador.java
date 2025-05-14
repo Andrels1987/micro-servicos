@@ -21,18 +21,19 @@ public class Morador {
     private String sobrenome;
     private String documento;
     private String apartamento;
-    private Character bloco;
+    private String bloco;
     private List<String> veiculos;
     private String foto;
     private String telefone;    
     List<DependenteDto> dependentes;
     private LocalDateTime criadoEm;
     private LocalDateTime modificadoEm;
+    private Boolean ativo;
 
     
 
 
-    public Morador(String nome, String sobrenome, String apartamento, Character bloco, List<String> idVeiculos,
+    public Morador(String nome, String sobrenome, String apartamento, String bloco, List<String> idVeiculos,
             String foto, String telefone, List<DependenteDto> dependentes, LocalDateTime criadoEm, String documento) {
         this.nome = nome;
         this.sobrenome = sobrenome;

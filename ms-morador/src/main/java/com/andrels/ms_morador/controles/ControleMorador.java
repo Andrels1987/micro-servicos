@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.andrels.ms_morador.clientes.VeiculoCliente;
+import com.andrels.ms_morador.exception.MoradorNotFoundException;
 import com.andrels.ms_morador.modelos.DependenteDto;
 import com.andrels.ms_morador.modelos.Morador;
 import com.andrels.ms_morador.modelos.MoradorDto;
@@ -29,47 +30,48 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("api")
 public class ControleMorador {
-   
+
     @Autowired
     ServicoMoradorImpl servicoMoradorImpl;
 
     @Autowired
     VeiculoCliente veiculoCliente;
 
-        @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/moradores")
     public ResponseEntity<List<Morador>> getAllMoradores() {
         List<Morador> moradores = servicoMoradorImpl.todosMoradores();
-        
+
         return ResponseEntity.ok().body(moradores);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")    
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/moradores/perfil/{id}")
     public ResponseEntity<MoradorDto> getMoradorById(@PathVariable("id") String id) {
-       MoradorDto morador =  servicoMoradorImpl.getMoradorPeloId(id);
-       return ResponseEntity.ok().body(morador);
-    }
-    @CrossOrigin(origins = "http://localhost:3000")    
-    @GetMapping("/morador/documento/{documento}")
-    public ResponseEntity<MoradorDto> getMoradorPeloDocumento(@PathVariable("documento") String documento) {
-       MoradorDto morador =  servicoMoradorImpl.buscarMoradorPeloDocumento(documento);
-       return ResponseEntity.ok().body(morador);
-    }
-    
-    @GetMapping("/morador/veiculo/placa/{placa}")
-    public ResponseEntity<Morador> getMoradorPelaPlacaDoVeiculo(@PathVariable("placa") String placa) {
-        Morador morador = servicoMoradorImpl.getProprietarioPelaPlacaDoVeiculo(placa);
-        
-        return ResponseEntity.ok().body(morador);
-    }
-    @GetMapping("/morador/veiculo/{id}")
-    public ResponseEntity<Morador> getMoradorPeloIdDoVeiculo(@PathVariable("id") String id) {
-        Morador morador = servicoMoradorImpl.getProprietarioPeloIdDoVeiculo(id);
-        
+        MoradorDto morador = servicoMoradorImpl.getMoradorPeloId(id);
         return ResponseEntity.ok().body(morador);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/morador/documento/{documento}")
+    public ResponseEntity<MoradorDto> getMoradorPeloDocumento(@PathVariable("documento") String documento) {
+        MoradorDto morador = servicoMoradorImpl.buscarMoradorPeloDocumento(documento);
+        return ResponseEntity.ok().body(morador);
+    }
+
+    @GetMapping("/morador/veiculo/placa/{placa}")
+    public ResponseEntity<Morador> getMoradorPelaPlacaDoVeiculo(@PathVariable("placa") String placa) {
+        Morador morador = servicoMoradorImpl.getProprietarioPelaPlacaDoVeiculo(placa);
+
+        return ResponseEntity.ok().body(morador);
+    }
+
+    @GetMapping("/morador/veiculo/{id}")
+    public ResponseEntity<Morador> getMoradorPeloIdDoVeiculo(@PathVariable("id") String id) {
+        Morador morador = servicoMoradorImpl.getProprietarioPeloIdDoVeiculo(id);
+
+        return ResponseEntity.ok().body(morador);
+    }
 
     @PostMapping("morador/add")
     public ResponseEntity<ResponseDto> addMorador(@RequestBody Morador morador) {
@@ -94,30 +96,43 @@ public class ControleMorador {
     }
 
     @DeleteMapping("morador/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteMorador(@PathVariable("id") String _id){
-        String resposta = servicoMoradorImpl.excluirMorador(_id);
-        return ResponseEntity.ok().body(new ResponseDto(resposta));
+    public ResponseEntity<ResponseDto> deleteMorador(@PathVariable("id") String _id) throws MoradorNotFoundException {
+        System.out.println("Chegou em deleteMorador()");
+        try {
+            String resposta = servicoMoradorImpl.excluirMorador(_id);
+            return ResponseEntity.ok().body(new ResponseDto(resposta));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(e.getMessage()));
+        }
+
     }
 
     @PutMapping("update/morador/{id}")
-    public String UpdateMorador(@PathVariable("id") String id, @RequestBody Morador morador){
-        System.out.println();
-        System.out.println();
-        System.out.println("Entrou em update");
-        System.out.println();
-        return servicoMoradorImpl.updateMorador(id, morador);
-    }
-    @PutMapping("adicionardependente/morador/{id}")
-    public ResponseEntity<ResponseDto> adicionarDependente(@PathVariable("id") String id, @RequestBody DependenteDto dependente){
+    public ResponseEntity<ResponseDto>  UpdateMorador(@PathVariable("id") String id, @RequestBody Morador morador) throws MoradorNotFoundException{
         
+        
+        try {            
+            String response = servicoMoradorImpl.updateMorador(id, morador);
+            return ResponseEntity.ok().body(new ResponseDto(response));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(e.getMessage()));
+        }
+       
+        
+    }
+
+    @PutMapping("adicionardependente/morador/{id}")
+    public ResponseEntity<ResponseDto> adicionarDependente(@PathVariable("id") String id,
+            @RequestBody DependenteDto dependente) {
+
         var response = servicoMoradorImpl.adicionarDependenteAoMorador(id, dependente);
         return ResponseEntity.ok().body(new ResponseDto(response));
     }
 
     @GetMapping("morador/veiculos/{idmorador}")
-    public ResponseEntity<List<VeiculoDto>> getVeiculosDoMorador(@PathVariable("idmorador") String idmorador){
+    public ResponseEntity<List<VeiculoDto>> getVeiculosDoMorador(@PathVariable("idmorador") String idmorador) {
         List<VeiculoDto> veiculosDoMorador = servicoMoradorImpl.getVeiculoPeloMorador(idmorador);
-        if(!veiculosDoMorador.isEmpty()){
+        if (!veiculosDoMorador.isEmpty()) {
             return ResponseEntity.ok().body(veiculosDoMorador);
         }
         return ResponseEntity.badRequest().body(List.of());

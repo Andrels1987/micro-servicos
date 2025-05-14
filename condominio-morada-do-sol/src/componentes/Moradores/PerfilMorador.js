@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Loading from '../../Loading'
-import { useGetMoradorPeloIdQuery } from '../../features/api/moradores/apiSliceMoradores'
+import { useGetMoradorPeloIdQuery, useRemoverMoradorMutation } from '../../features/api/moradores/apiSliceMoradores'
 
 import { useEffect } from 'react'
 
@@ -16,6 +16,7 @@ const PerfilMorador = () => {
   
   const { id } = useParams()
   const { data: morador, isLoading, error, refetch } = useGetMoradorPeloIdQuery(id)
+  const [removerMorador] = useRemoverMoradorMutation()
   const navigate = useNavigate()
   
 
@@ -23,13 +24,25 @@ const PerfilMorador = () => {
 
 
   useEffect(() => {
+    refetch()
     if (error) {
       navigate("/")
     }
-  }, [navigate, error])
+  }, [navigate, error, refetch])
 
   
- 
+ const handleRemoverMorador = async(e) => {
+    e.preventDefault();
+    try {
+      const response = await removerMorador(id).unwrap();
+      if(response){
+        navigate("/moradores")
+        console.log("RESPONSE: ", response);
+      }
+    } catch (error) {
+      console.error(error)
+    }
+ }
 
 
   const renderVeiculos = () => {
@@ -95,7 +108,8 @@ const PerfilMorador = () => {
           <h6>Telefone : <code>{morador.telefone}</code></h6>
         </div>
         <div className='btn-atualizar'>
-          <Link to={`../update-morador/${morador.id}`}>atualizar</Link>
+          <Link className='atualizar-morador' to={`../update-morador/${morador.id}`}>Atualizar</Link>
+          <button className="deletar-morador" onClick={handleRemoverMorador}>Remover</button>
         </div>
       </section>
 

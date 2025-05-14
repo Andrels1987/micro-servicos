@@ -31,6 +31,13 @@ export const apiSliceMoradores = createApi({
             }),
             invalidatesTags: ['moradores']
         }),
+        removerMorador: builder.mutation({
+            query: (id) =>({
+                url: `/morador/delete/${id}`,
+                method: "DELETE"
+            }),
+            invalidatesTags: ["moradores"]
+        }),
         updateMorador: builder.mutation({
             query: (morador) => ({
                 url: `/update/morador/${morador.id}`,
@@ -45,7 +52,8 @@ export const apiSliceMoradores = createApi({
                     veiculos: morador.veiculos,
                     foto: morador.foto,
                     telefone: morador.telefone,
-                    dependentes: morador.dependentes
+                    dependentes: morador.dependentes,
+                    ativo: morador.ativo
                 }
             }),
             invalidatesTags: (result, error, arg) => [{ type: 'moradores', id: arg.id }]
@@ -155,5 +163,6 @@ export const {
     useGetProprietarioPeloIdVeiculoQuery,
     useGetProprietarioPelaPlacaVeiculoQuery,
     useLogoutAppMutation, 
-    useAssociarDependenteAoMoradorMutation
+    useAssociarDependenteAoMoradorMutation,
+    useRemoverMoradorMutation
 } = apiSliceMoradores

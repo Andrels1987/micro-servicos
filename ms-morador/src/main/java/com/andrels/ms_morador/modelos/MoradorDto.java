@@ -16,7 +16,7 @@ public class MoradorDto{
     private String nome;
     private  String sobrenome;
     private String apartamento;
-    private Character bloco;
+    private String bloco;
     private List<VeiculoDto> veiculos;
     private String foto;
     private String telefone;    
@@ -24,6 +24,7 @@ public class MoradorDto{
     private LocalDateTime criadoEm;
     private LocalDateTime modificadoEm;
     private String documento;
+    private Boolean ativo;
 
 
 

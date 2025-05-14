@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.andrels.ms_morador.clientes.VeiculoCliente;
+import com.andrels.ms_morador.exception.MoradorNotFoundException;
 import com.andrels.ms_morador.modelos.DependenteDto;
 import com.andrels.ms_morador.modelos.DependenteInfo;
 import com.andrels.ms_morador.modelos.Morador;
@@ -34,8 +35,9 @@ public class ServicoMoradorImpl implements ServicoMorador {
 
     @Override
     public List<Morador> todosMoradores() {
-        List<Morador> moradores = repositorioMorador.findAll();
+        List<Morador> moradores = repositorioMorador.findAllMoradores();
         if (!moradores.isEmpty()) {
+            
             return moradores;
         }
         return List.of();
@@ -56,6 +58,7 @@ public class ServicoMoradorImpl implements ServicoMorador {
             dto.setFoto(moradorEncontrado.get().getFoto());
             dto.setDocumento(moradorEncontrado.get().getDocumento());
             dto.setCriadoEm(moradorEncontrado.get().getCriadoEm());
+            dto.setAtivo(moradorEncontrado.get().getAtivo());
 
             // morador.setVeiculos(moradorEncontrado.get().getPlacaVeiculos());
 
@@ -119,12 +122,15 @@ public class ServicoMoradorImpl implements ServicoMorador {
     }
 
     @Override
-    public String excluirMorador(String _id) {
+    public String excluirMorador(String _id) throws MoradorNotFoundException {
         Optional<Morador> moradorEncontrado = this.repositorioMorador.findById(_id);
         if (moradorEncontrado.isEmpty()) {
-            return "Morador com esse id não encontrado";
+            throw new MoradorNotFoundException("Morador com esse id não encontrado");
         }
-        this.repositorioMorador.deleteById(_id);
+        Morador morador = moradorEncontrado.get();
+        morador.setAtivo(false);
+        repositorioMorador.save(morador);   
+        System.out.println("Chegou em excluir morador");
         return "Morador com id: " + moradorEncontrado.get().getId() + " deletado com sucesso";
     }
 
@@ -138,16 +144,14 @@ public class ServicoMoradorImpl implements ServicoMorador {
     }
 
     @Override
-    public String updateMorador(String _id, Morador updatedmorador) {
+    public String updateMorador(String _id, Morador updatedmorador) throws MoradorNotFoundException {
         Optional<Morador> optionalMorador = repositorioMorador.findById(_id);
         if (!optionalMorador.isPresent()) {
-            System.out.println("Morador NÃO ENCONTRADO");
-            return "";
+            throw new MoradorNotFoundException("orador não encontrado");
+          
         }
-
       
         Morador moradorSalvo = optionalMorador.get();
-        // updatedmorador.setId(moradorSalvo.getId());
         if (updatedmorador.getVeiculos() != null) {
             Set<String> veiculosSet = new HashSet<>(updatedmorador.getVeiculos());
             if (moradorSalvo.getVeiculos() != null) {
@@ -176,10 +180,14 @@ public class ServicoMoradorImpl implements ServicoMorador {
                   
             dependentes.addAll(newDependentes);
         }
-
+        moradorSalvo.setFoto(updatedmorador.getFoto());
         modelMapper.map(updatedmorador, moradorSalvo);
-
-        this.repositorioMorador.save(moradorSalvo);
+        System.out.println();
+        System.out.println();
+        System.out.println("Entrou em update " + _id);
+        System.out.println("Entrou em update " + updatedmorador);
+        System.out.println();
+        this.repositorioMorador.save(moradorSalvo); 
         return moradorSalvo.getId();
     }
 

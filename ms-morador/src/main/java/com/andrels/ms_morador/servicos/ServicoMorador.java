@@ -2,6 +2,7 @@ package com.andrels.ms_morador.servicos;
 
 import java.util.List;
 
+import com.andrels.ms_morador.exception.MoradorNotFoundException;
 import com.andrels.ms_morador.modelos.DependenteDto;
 import com.andrels.ms_morador.modelos.Morador;
 import com.andrels.ms_morador.modelos.MoradorDto;
@@ -16,7 +17,7 @@ public interface ServicoMorador {
     public Morador getMoradorPeloCpf(String cpf);
     public Morador getProprietarioPelaPlacaDoVeiculo(String placa);
     public Morador getProprietarioPeloIdDoVeiculo(String id);
-    public String excluirMorador(String _id);
-    public String updateMorador(String _id, Morador morador);
+    public String excluirMorador(String _id) throws MoradorNotFoundException;
+    public String updateMorador(String _id, Morador morador) throws MoradorNotFoundException;
     public String adicionarDependenteAoMorador(String _id, DependenteDto dependente);
 }
