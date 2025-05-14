@@ -5,7 +5,7 @@ import {
   useGetMoradorPeloIdQuery,
   useUpdateMoradorMutation,
 } from "../../features/api/moradores/apiSliceMoradores";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router-dom";
 
 const moradorModelo = {
   id: "",
@@ -24,6 +24,7 @@ const moradorModelo = {
 const FormMoradores = () => {
  
   const { id } = useParams();
+  const navigate = useNavigate()
   const [morador, setMorador] = useState(moradorModelo);
   const [addMorador] = useAddMoradorMutation();
   const [updateMorador] = useUpdateMoradorMutation();
@@ -54,9 +55,10 @@ const FormMoradores = () => {
 
     try {
       if (id) {
-        console.log(morador);        
+
         await updateMorador(morador).unwrap();
         alert("Morador atualizado com sucesso.");
+        navigate("/moradores")
       } else {
         await addMorador(morador).unwrap();
         alert("Morador criado com sucesso.");

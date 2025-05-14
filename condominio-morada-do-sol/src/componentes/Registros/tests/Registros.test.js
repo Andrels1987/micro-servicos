@@ -4,7 +4,7 @@ import React from "react"
 import Registros from '../Registros'
 import { Provider, useDispatch } from "react-redux"
 import { apiSliceServicosPrestados, useLazyGetServicosPrestadosQuery } from "../../../features/api/servicos/apiServicosPrestados"
-import { MemoryRouter, Route, Routes } from "react-router"
+import { MemoryRouter, Route, Routes } from "react-router-dom"
 import user from "@testing-library/user-event"
 import * as apiServicos from "../../../features/api/servicos/apiServicosPrestados";
 import PerfilRegistro from "../PerfilRegistro"

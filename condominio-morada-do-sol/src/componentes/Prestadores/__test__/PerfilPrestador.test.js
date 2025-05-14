@@ -1,10 +1,10 @@
 import React from "react";
 import "@testing-library/jest-dom"
-import { screen, render, queries } from "@testing-library/react"
+import { screen, render } from "@testing-library/react"
 import PerfilPrestador from "../PerfilPrestador";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import reducer, { apiPrestadorSlice } from "../../../features/api/prestadores/apiPrestadorSlice";
+import { apiPrestadorSlice } from "../../../features/api/prestadores/apiPrestadorSlice";
 import { apiSliceServicosPrestados, useGetServicosPrestadosQuery } from "../../../features/api/servicos/apiServicosPrestados";
 import { MemoryRouter, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import user from "@testing-library/user-event"
@@ -13,9 +13,7 @@ import * as prestadorApi from '../../../features/api/prestadores/apiPrestadorSli
 import FormPrestador from "../FormPrestador";
 import RegistrarEntrada from "../../Registros/RegistrarEntrada"
 import { apiSliceMoradores, useGetMoradoresQuery } from "../../../features/api/moradores/apiSliceMoradores";
-import PrestadorPage from '../PrestadorPage';
-import PrestadorList from "../PrestadorList";
-import Registros from '../../Registros/Registros'
+
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -83,7 +81,8 @@ jest.mock("../../../features/api/moradores/apiSliceMoradores", () => ({
 const store = configureStore({
     reducer: {
         [apiPrestadorSlice.reducerPath]: apiPrestadorSlice.reducer,
-        [apiSliceServicosPrestados.reducerPath]: apiSliceServicosPrestados.reducer
+        [apiSliceServicosPrestados.reducerPath]: apiSliceServicosPrestados.reducer,
+        [apiSliceMoradores.reducerPath]: () => apiSliceMoradores.reducer
     }
 })
 

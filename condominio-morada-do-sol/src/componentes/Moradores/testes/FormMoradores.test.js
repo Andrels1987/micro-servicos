@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import '@testing-library/jest-dom';
 import 'whatwg-fetch';
 import { configureStore } from "@reduxjs/toolkit";
-import { MemoryRouter, useParams } from "react-router";
+import { MemoryRouter, useParams } from "react-router-dom";
 import user from "@testing-library/user-event";
 import {
   apiSliceMoradores,
@@ -15,8 +15,8 @@ import {
 } from "../../../features/api/moradores/apiSliceMoradores.js";
 
 // Setup geral
-jest.mock('react-router', () => ({
-  ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useParams: jest.fn()
 }));
 

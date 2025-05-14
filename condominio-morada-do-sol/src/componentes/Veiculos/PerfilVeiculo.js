@@ -11,7 +11,7 @@ const PerfilVeiculo = () => {
   
   if (isLoading) return <p className="text-center text-gray-300 mt-10">Carregando veículo...</p>;
   if (isError || !veiculo) return <p className="text-center text-red-400 mt-10">Erro ao carregar veículo.</p>;
-  console.log(veiculo);
+ 
   
   const { marca, modelo, cor, placa, foto, motorista } = veiculo;
 
@@ -37,7 +37,7 @@ const PerfilVeiculo = () => {
               <p className="text-center text-gray-400">Carregando proprietário...</p>
             ) : (
               <p data-testid="proprietario" className="text-center">
-                <code>{`${motorista.nome} ${motorista.sobrenome} | `}</code><br />
+                <code>{`${motorista.nome} `}</code><br />
                 <code>Apto: {motorista.apartamento} - Bloco {motorista.bloco}</code>
               </p>
             )}

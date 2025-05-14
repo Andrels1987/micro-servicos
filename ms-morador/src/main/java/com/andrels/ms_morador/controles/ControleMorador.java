@@ -15,6 +15,7 @@ import com.andrels.ms_morador.modelos.DependenteDto;
 import com.andrels.ms_morador.modelos.Morador;
 import com.andrels.ms_morador.modelos.MoradorDto;
 import com.andrels.ms_morador.modelos.ResponseDto;
+import com.andrels.ms_morador.modelos.ResponseId;
 import com.andrels.ms_morador.modelos.VeiculoDto;
 import com.andrels.ms_morador.serviceImpl.ServicoMoradorImpl;
 
@@ -119,6 +120,9 @@ public class ControleMorador {
         }
        
         
+
+    
+
     }
 
     @PutMapping("adicionardependente/morador/{id}")

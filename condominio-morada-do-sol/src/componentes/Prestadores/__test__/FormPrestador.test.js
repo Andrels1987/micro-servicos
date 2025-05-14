@@ -1,15 +1,15 @@
 import '@testing-library/jest-dom'
 import React from 'react'
 import FormPrestador from "../FormPrestador"
-import { queries, render, screen } from '@testing-library/react'
+import {  render, screen } from '@testing-library/react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { apiPrestadorSlice,  } from '../../../features/api/prestadores/apiPrestadorSlice'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import user from '@testing-library/user-event'
 
-jest.mock('react-router', ()=> ({
-    ...jest.requireActual('react-router'),
+jest.mock('react-router-dom', ()=> ({
+    ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
 }))
 jest.mock('react-redux', ()=> ({

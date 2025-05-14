@@ -145,6 +145,8 @@ public class ServicoMoradorImpl implements ServicoMorador {
 
     @Override
     public String updateMorador(String _id, Morador updatedmorador) throws MoradorNotFoundException {
+        System.out.println("ID: " + _id);
+
         Optional<Morador> optionalMorador = repositorioMorador.findById(_id);
         if (!optionalMorador.isPresent()) {
             throw new MoradorNotFoundException("orador não encontrado");

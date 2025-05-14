@@ -22,7 +22,7 @@ const MoradoresList = () => {
         isLoading,
         isSuccess,
         isError,
-        error,
+        error
     } = useGetMoradoresQuery();
 
     // Atualiza a lista filtrada ao carregar os moradores

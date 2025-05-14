@@ -2,12 +2,11 @@ package com.auth.authentication.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class AuthRequest {
-    private String username;
-    private String password;
+@NoArgsConstructor
+public class EmailRequest {
     private String email;
-    private String role = "USER";
 }

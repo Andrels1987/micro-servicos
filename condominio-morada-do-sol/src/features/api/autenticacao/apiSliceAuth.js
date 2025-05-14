@@ -43,11 +43,39 @@ export const apiSliceAutenticacao = createApi({
                 }
             }),
             invalidatesTags: ['autenticacao']
+        }),
+        sendEmail: builder.mutation({
+            query: (email) => ({
+                url: '/auth/forgot-password',
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json' 
+                },
+                body: {
+                    email
+                }
+            }),
+            invalidatesTags: ['autenticacao']
+        }),
+        redefinirSenha: builder.mutation({
+            query: ({token, newPassword}) =>({
+                url: "/auth/reset-password",
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json' 
+                },
+                body: {
+                    token,
+                    newPassword
+                }
+            })
         })
     })
 })
 
 export const {
     useLoginMutation,
-    useRegisterMutation
+    useRegisterMutation,
+    useSendEmailMutation,
+    useRedefinirSenhaMutation
 } = apiSliceAutenticacao

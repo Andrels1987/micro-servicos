@@ -2,7 +2,7 @@ import React, {  useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPrestadorPeloId, postPrestador, updatePrestador } from "../../features/api/prestadores/apiPrestadorSlice";
 import Profile from "../Profile";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 // Modelo inicial do prestador
 const modeloPrestador = {
@@ -29,7 +29,6 @@ const FormPrestador = () => {
     }
   }, [idPrestador, prestadorExistente]);
 
-  
   
 
   const handleInputChange = (e) => {
