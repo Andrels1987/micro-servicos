@@ -78,8 +78,8 @@ const App = () => {
               <Route path={"/prestadores"}>
                 <Route index element={<PrestadorList />} />
                 <Route path={"add-prestador"} element={<FormPrestador />} />
-                <Route path={"update-prestador/:idPrestador"} element={<FormPrestador />} />
-                <Route path={"perfil-prestador/:idPrestador"} element={<PerfilPrestador />} />
+                <Route path={"update-prestador/:id"} element={<FormPrestador />} />
+                <Route path={"perfil-prestador/:id"} element={<PerfilPrestador />} />
                 <Route path="perfil-veiculo/:id" element={<PerfilVeiculo />} />
               </Route>
 

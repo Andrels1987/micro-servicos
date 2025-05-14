@@ -12,7 +12,8 @@ const modeloPrestador = {
   numeroDocumento: "", 
   foto: "", 
   idVeiculo: "",
-  servicoPrestado: ""
+  servicoPrestado: "",
+  isAtivo: true
 };
 
 const FormPrestador = () => {

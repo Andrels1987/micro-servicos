@@ -37,10 +37,6 @@ public class SecurityFilter extends OncePerRequestFilter {
          if (token != null) {              
             //var username = tokenService.validateToken(token);
             var username = tokenService.extractUsername(token);
-            System.out.println("USERNAME : " + username);
-            System.out.println("TOKEN : " + token);
-            System.out.println();
-            System.out.println();
             if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserDetails userdetails = authService.loadUserByUsername(username);
                 var authentication = new UsernamePasswordAuthenticationToken(userdetails, null, userdetails.getAuthorities());

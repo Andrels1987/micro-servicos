@@ -17,6 +17,7 @@ public class PrestadorDeServico {
     private String servicoPrestado;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
+    private Boolean isAtivo;
 
     public PrestadorDeServico() {
 
@@ -26,7 +27,8 @@ public class PrestadorDeServico {
             String sobrenome, String numeroDocumento,
             String empresa, String foto,
             LocalDateTime criadoEm, LocalDateTime atualizadoEm,
-            String idVeiculo, String servicoPrestado) {
+            String idVeiculo, String servicoPrestado,
+            Boolean isAtivo) {
         this.id = id;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -37,6 +39,7 @@ public class PrestadorDeServico {
         this.atualizadoEm = atualizadoEm;
         this.idVeiculo = idVeiculo;
         this.servicoPrestado = servicoPrestado;
+        this.isAtivo = isAtivo;
     }
 
     public String getNome() {
@@ -125,7 +128,15 @@ public class PrestadorDeServico {
         return "PrestadorDeServico [id=" + id + ", nome=" + nome + ", sobrenome=" + sobrenome + ", empresa=" + empresa
                 + ", numeroDocumento=" + numeroDocumento + ", foto=" + foto + ", idVeiculo=" + idVeiculo
                 + ", servicoPrestado=" + servicoPrestado + ", criadoEm=" + criadoEm + ", atualizadoEm=" + atualizadoEm
-                + "]";
+                + ", isAtivo=" + isAtivo + "]";
+    }
+
+    public Boolean getIsAtivo() {
+        return isAtivo;
+    }
+
+    public void setIsAtivo(Boolean isAtivo) {
+        this.isAtivo = isAtivo;
     }
 
     

@@ -1,7 +1,7 @@
 import React, {  useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deletePrestador, getPrestadorPeloId } from '../../features/api/prestadores/apiPrestadorSlice';
+import { deletePrestador, fetchPrestadores, fetchPrestadorPeloId, getPrestadorPeloId } from '../../features/api/prestadores/apiPrestadorSlice';
 import { useGetServicosPrestadosQuery } from '../../features/api/servicos/apiServicosPrestados';
 import Loading from '../../Loading';
 import { format } from 'date-fns';
@@ -9,8 +9,8 @@ import { format } from 'date-fns';
 const PerfilPrestador = () => {
 
   
-  const { idPrestador } = useParams();
-  const prestador = useSelector(state => getPrestadorPeloId(state, idPrestador));
+  const { id } = useParams();
+  const prestador = useSelector(state => getPrestadorPeloId(state, id));
   
   const { data: servicosPrestados } = useGetServicosPrestadosQuery();
   const [entregasPorPrestador, setEntregasPorPrestador] = useState([]);
@@ -21,14 +21,16 @@ const PerfilPrestador = () => {
     if (!servicosPrestados) return;
   
     const registrosFormatados = servicosPrestados.reduce((acc, entrega) => {
-      const mesmoPrestador = entrega.idPrestadorDeServico === idPrestador;
+      console.log(entrega);
+      
+      const mesmoPrestador = entrega.prestador.id === id;
       if (!mesmoPrestador) return acc;
   
       acc.push({
         id: entrega.id,
-        nomeMorador: entrega.nomeMorador,
-        apt: entrega.apartamento,
-        bl: entrega.bloco,
+        nomeMorador: entrega.morador.nome,
+        apt: entrega.morador.apartamento,
+        bl: entrega.morador.bloco,
         entrada: format(new Date(entrega.dataInicioDoServico), 'dd-MM-yyyy\tHH:mm:ss'),
         saida: entrega.dataEncerramentoDoServico
           ? format(new Date(entrega.dataEncerramentoDoServico), 'dd-MM-yyyy\tHH:mm:ss')
@@ -39,8 +41,13 @@ const PerfilPrestador = () => {
     }, []);
   
     setEntregasPorPrestador(registrosFormatados);
-  }, [servicosPrestados, idPrestador]);
+  }, [servicosPrestados, id]);
   
+useEffect(() => {  
+
+    dispatch(fetchPrestadores())
+  
+}, [dispatch])
 
 
   const handleDelete = (id) => {

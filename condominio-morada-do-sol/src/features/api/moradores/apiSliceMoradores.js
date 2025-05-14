@@ -170,5 +170,6 @@ export const {
     useGetProprietarioPeloIdVeiculoQuery,
     useGetProprietarioPelaPlacaVeiculoQuery,
     useLogoutAppMutation, 
-    useAssociarDependenteAoMoradorMutation
+    useAssociarDependenteAoMoradorMutation,
+    useRemoverMoradorMutation
 } = apiSliceMoradores

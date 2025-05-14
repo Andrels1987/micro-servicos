@@ -36,15 +36,21 @@ public class PrestadorControler {
     @Autowired
     private ModelMapper modelMapper;
 
-    @GetMapping("/prestadores")
-    public List<PrestadorDeServico> getEntregadores() {
+    @GetMapping("/todos-prestadores")
+    public List<PrestadorDeServico> getAllPrestadores() {
         List<PrestadorDeServico> prestadores = this.repositorioDePrestadores.findAll();
+        return prestadores;
+    }
+    @GetMapping("/prestadores")
+    public List<PrestadorDeServico> getPrestadores() {
+        List<PrestadorDeServico> prestadores = this.repositorioDePrestadores.findAllActivePrestadores();
         return prestadores;
     }
 
     @GetMapping("/prestador/{id}")
     public PrestadorDeServico getEntregadorPeloId(@PathVariable("id") String id) {
         Optional<PrestadorDeServico> prestador = this.repositorioDePrestadores.findById(id);
+
         if(prestador.isPresent())
             return prestador.get();
         

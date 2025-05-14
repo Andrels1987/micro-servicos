@@ -17,10 +17,11 @@ const Login = () => {
 
   const makeLogin = async (e) => {
     e.preventDefault();
-
+    
     try {
       const { data } = await getLogin({ login });
-
+      console.log("Entrou : ", login);
+      
       if (!data) {
         setMessage("Sem conexão...");
         return;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { useRedefinirSenhaMutation } from '../../features/api/autenticacao/apiSliceAuth';
 
 const RedefinirSenha = () => {

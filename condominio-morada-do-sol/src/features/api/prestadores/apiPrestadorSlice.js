@@ -28,7 +28,6 @@ export const fetchPrestadorPeloId = createAsyncThunk(
   "prestadores/fetchPrestadorPeloId",
   async ({ id }, { rejectWithValue }) => {
     const token = sessionStorage.getItem('jwt');
-    console.log(token);
     try {
       const response = await axios.get(`${url}/prestador/${id}`, {
         headers: {
@@ -36,6 +35,7 @@ export const fetchPrestadorPeloId = createAsyncThunk(
           "Content-Type": "application/json",
         },
       });
+      console.log(response.data)
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Erro ao buscar prestador.");
@@ -207,8 +207,7 @@ export const apiPrestadorSlice = createSlice({
 });
 
 export const getPrestadores = (state) => state.prestador.prestadores;
-export const getPrestadorPeloId = (state, id) =>
-  state.prestador.prestadores.find((p) => p.id === id);
+export const getPrestadorPeloId = (state, id) =>  state.prestador.prestadores.find((p) => p.id === id);
 export const getStatus = (state) => state.prestador.status;
 export const getError = (state) => state.prestador.error;
 
